@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "posts": [
+    {
+      "date": "2026-03-30",
+      "title": "Skyline Demo — 故事驱动交互 PRD",
+      "tags": [
+        "AI",
+        "项目"
+      ],
+      "url": "/projects/skyline-demo-outline.html",
+      "excerpt": "完整的故事驱动交互 Demo PRD，包含三层角色体系、功能分层与技术验证标准。"
+    },
+    {
+      "date": "2026-03-30",
+      "title": "青云废墟奇遇记 — 故事脚本",
+      "tags": [
+        "AI"
+      ],
+      "url": "/projects/skyline-story-script.html",
+      "excerpt": "九幕修仙互动故事脚本，含三条支线与多角色动态调度设计。"
+    }
+  ]
+}
