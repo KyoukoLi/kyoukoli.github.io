@@ -91,7 +91,8 @@ sorted.forEach(tag => {
 function renderPosts(filter) {
   const list = document.getElementById('postList');
   list.innerHTML = '';
-  const filtered = filter === 'all' ? POSTS : POSTS.filter(p => p.tags.includes(filter));
+  const filtered = (filter === 'all' ? POSTS : POSTS.filter(p => p.tags.includes(filter)))
+    .sort((a, b) => b.date.localeCompare(a.date));
   if (filtered.length === 0) { list.innerHTML = '<div class="empty">暂无文章</div>'; return; }
   let curYear = '';
   filtered.forEach(p => {
