@@ -6,17 +6,16 @@
 <title>iDiana — 朕说</title>
 <meta name="description" content="AI随笔 · 项目复盘 · 生活感悟">
 <meta name="theme-color" content="#222">
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#fff;color:#222;line-height:1.9;font-size:15px}
 a{color:#222;text-decoration:none}
 a:hover{color:#0969da}
 header{text-align:center;padding:60px 20px 40px;border-bottom:1px solid #eee}
-header h1{font-size:2em;font-weight:700;letter-spacing:-0.5px}
-header p{color:#888;font-size:0.9em;margin-top:8px}
-header p a{margin:0 8px;color:#888}
-header p a:hover{color:#0969da}
+header h1{font-size:2em;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px}
+header .subtitle{color:#888;font-size:0.9em;margin-bottom:16px}
+header nav a{display:inline-block;margin:0 10px;color:#666;font-size:0.88em}
+header nav a:hover{color:#0969da}
 .container{max-width:720px;margin:0 auto;padding:40px 20px}
 .filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px;align-items:center}
 .filter-tag{display:inline-block;padding:4px 14px;border:1px solid #ddd;border-radius:20px;font-size:0.85em;color:#666;cursor:pointer;transition:all .2s}
@@ -24,12 +23,12 @@ header p a:hover{color:#0969da}
 .filter-tag .count{opacity:.6;font-size:.85em;margin-left:4px}
 .timeline{position:relative;padding-left:28px}
 .timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:#eee}
-.year-marker{font-size:0.85em;color:#999;font-weight:600;margin:30px 0 15px;padding-left:0;position:relative}
-.year-marker::before{content:'';position:absolute;left:-24px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:#ddd;border:2px solid #fff}
+.year-marker{font-size:0.85em;color:#999;font-weight:600;margin:30px 0 15px;padding-left:0}
+.year-marker::before{content:'';display:inline-block;width:10px;height:10px;border-radius:50%;background:#ddd;border:2px solid #fff;margin-right:10px;vertical-align:middle}
 .post-item{margin-bottom:28px;position:relative}
 .post-item::before{content:'';position:absolute;left:-24px;top:10px;width:8px;height:8px;border-radius:50%;background:#ccc;border:2px solid #fff;box-shadow:0 0 0 2px #fff}
 .post-date{font-size:0.8em;color:#aaa;margin-bottom:2px}
-.post-title{font-size:1.05em;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.post-title{font-size:1.05em;font-weight:600;margin-bottom:4px}
 .post-title a:hover{color:#0969da}
 .post-tags{display:flex;gap:6px;flex-wrap:wrap}
 .post-tag{padding:1px 10px;border-radius:10px;font-size:0.75em;background:#f5f5f5;color:#666}
@@ -37,21 +36,23 @@ header p a:hover{color:#0969da}
 .post-tag.life{background:#fef7e0;color:#7c4a00}
 .post-tag.work{background:#e6f4ea;color:#1e7e34}
 .post-tag.ai{background:#f3e8fd;color:#840}
-.post-excerpt{font-size:0.88em;color:#888;margin-top:4px;display:none}
 .empty{text-align:center;color:#ccc;padding:60px 0;font-size:0.95em}
 footer{text-align:center;padding:40px 20px;color:#aaa;font-size:0.8em;border-top:1px solid #eee;margin-top:60px}
 footer a{color:#aaa}
+footer a:hover{color:#0969da}
+.extra-note{text-align:center;padding:20px;color:#bbb;font-size:0.85em;font-style:italic;margin-top:20px}
 @media(max-width:600px){.container{padding:30px 16px}}
 </style>
 </head>
 <body>
 <header>
   <h1>iDiana</h1>
-  <p>
+  <p class="subtitle">请来一束追光照亮这海底</p>
+  <nav>
     <a href="/projects/skyline-demo-outline.html">📋 Skyline Demo</a>
-    <a href="/tags">🏷️ 标签</a>
+    <a href="/tags/随笔">🏷️ 标签</a>
     <a href="/2022">📁 归档</a>
-  </p>
+  </nav>
 </header>
 <div class="container">
   <div class="filter-bar" id="filterBar">
@@ -60,27 +61,30 @@ footer a{color:#aaa}
   <div class="timeline" id="postList"></div>
 </div>
 <footer>
-  <p><a href="https://github.com/KyoukoLi" target="_blank">GitHub</a> · 朕说</p>
+  <p><a href="https://github.com/KyoukoLi" target="_blank">GitHub KyoukoLi</a> · 朕说</p>
 </footer>
 <script>
-// Built-in posts (fallback if JSON fails)
 const POSTS = [
-  {date:"2026-03-30",year:"2026",title:"Skyline Demo — 故事驱动交互 PRD",tags:["AI","项目"],"url":"/projects/skyline-demo-outline.html","excerpt":"完整的故事驱动交互 Demo PRD，包含三层角色体系、功能分层与技术验证标准。","type":"project"},
-  {date:"2026-03-30",year:"2026",title:"青云废墟奇遇记 — 故事脚本",tags:["AI"],"url":"/projects/skyline-story-script.html","excerpt":"九幕修仙互动故事脚本，含三条支线与多角色动态调度设计。","type":"ai"}
+  {date:"2026-03-30",title:"Skyline Demo — 故事驱动交互 PRD",tags:["AI","项目"],"url":"/projects/skyline-demo-outline.html","excerpt":"完整的故事驱动交互 Demo PRD，包含三层角色体系、功能分层与技术验证标准。","type":"project"},
+  {date:"2026-03-30",title:"青云废墟奇遇记 — 故事脚本",tags:["AI"],"url":"/projects/skyline-story-script.html","excerpt":"九幕修仙互动故事脚本，含三条支线与多角色动态调度设计。","type":"ai"}
 ];
-const TAG_COLORS = {project:"project",ai:"ai",life:"life",work:"work"};
 const TAG_NAMES = {project:"项目复盘",ai:"AI随笔",life:"生活感悟",work:"工作"};
+const TAG_CLASS = {project:"project",ai:"ai",life:"life",work:"work"};
+
+// Derive year from date
+function getYear(d) { return d ? d.split('-')[0] : '无年份'; }
 
 // Build filter tags
 const allTags = {};
 POSTS.forEach(p => p.tags.forEach(t => allTags[t] = (allTags[t]||0)+1));
 const tagOrder = ['AI','项目','生活','工作','随笔'];
-const sorted = Object.keys(allTags).sort((a,b)=>(tagOrder.indexOf(a)===-1?99:tagOrder.indexOf(a))-(tagOrder.indexOf(b)===-1?99:tagOrder.indexOf(b)));
+const sorted = Object.keys(allTags).sort((a,b)=>
+  (tagOrder.indexOf(a)===-1?99:tagOrder.indexOf(a))-(tagOrder.indexOf(b)===-1?99:tagOrder.indexOf(b)));
 sorted.forEach(tag => {
   const el = document.createElement('span');
   el.className = 'filter-tag';
   el.dataset.tag = tag;
-  el.innerHTML = TAG_NAMES[tag]||tag + '<span class="count">(' + allTags[tag] + ')</span>';
+  el.innerHTML = (TAG_NAMES[tag]||tag) + '<span class="count">(' + allTags[tag] + ')</span>';
   document.getElementById('filterBar').appendChild(el);
 });
 
@@ -92,8 +96,9 @@ function renderPosts(filter) {
   if (filtered.length === 0) { list.innerHTML = '<div class="empty">暂无文章</div>'; return; }
   let curYear = '';
   filtered.forEach(p => {
-    if (p.year !== curYear) {
-      curYear = p.year;
+    const yr = getYear(p.date);
+    if (yr !== curYear) {
+      curYear = yr;
       const y = document.createElement('div');
       y.className = 'year-marker';
       y.textContent = curYear + ' 年';
@@ -101,7 +106,7 @@ function renderPosts(filter) {
     }
     const el = document.createElement('div');
     el.className = 'post-item';
-    const tags = p.tags.map(t => '<span class="post-tag ' + (TAG_COLORS[t]||'') + '">' + (TAG_NAMES[t]||t) + '</span>').join('');
+    const tags = p.tags.map(t => '<span class="post-tag ' + (TAG_CLASS[t]||'') + '">' + (TAG_NAMES[t]||t) + '</span>').join('');
     el.innerHTML = '<div class="post-date">' + p.date + '</div><div class="post-title"><a href="' + p.url + '">' + p.title + '</a></div><div class="post-tags">' + tags + '</div>';
     list.appendChild(el);
   });
@@ -110,6 +115,17 @@ function renderPosts(filter) {
 // Load posts.json
 fetch('/posts/posts.json').then(r=>r.json()).then(data=>{
   if(data.posts&&data.posts.length){POSTS.length=0;POSTS.push(...data.posts.map(p=>({...p,type:p.tags[0]})))}
+  // Rebuild filter tags
+  document.getElementById('filterBar').innerHTML='<span class="filter-tag active" data-tag="all">全部</span>';
+  const at2={};
+  POSTS.forEach(p=>p.tags.forEach(t=>at2[t]=(at2[t]||0)+1));
+  Object.keys(at2).sort((a,b)=>(tagOrder.indexOf(a)===-1?99:tagOrder.indexOf(a))-(tagOrder.indexOf(b)===-1?99:tagOrder.indexOf(b))).forEach(tag=>{
+    const el=document.createElement('span');
+    el.className='filter-tag';
+    el.dataset.tag=tag;
+    el.innerHTML=(TAG_NAMES[tag]||tag)+'<span class="count">('+at2[tag]+')</span>';
+    document.getElementById('filterBar').appendChild(el);
+  });
   renderPosts('all');
 }).catch(()=>renderPosts('all'));
 
