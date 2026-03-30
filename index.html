@@ -1,572 +1,125 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iDiana — 朕说</title>
+<meta name="description" content="AI随笔 · 项目复盘 · 生活感悟">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 6.1.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
 <link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
-
-  <meta name="description" content="请来一束追光照亮这海底">
-<meta property="og:type" content="website">
-<meta property="og:title" content="iDiana">
-<meta property="og:url" content="http://example.com/index.html">
-<meta property="og:site_name" content="iDiana">
-<meta property="og:description" content="请来一束追光照亮这海底">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:author" content="Alex Lee">
-<meta name="twitter:card" content="summary">
-
-<link rel="canonical" href="http://example.com/">
-
-
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : true,
-    isPost : false,
-    lang   : 'zh-CN'
-  };
-</script>
-
-  <title>iDiana</title>
-  
-
-
-
-
-
-
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
-
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
-
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
-
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#fff;color:#222;line-height:1.9;font-size:15px}
+a{color:#222;text-decoration:none}
+a:hover{color:#0969da}
+header{text-align:center;padding:60px 20px 40px;border-bottom:1px solid #eee}
+header h1{font-size:2em;font-weight:700;letter-spacing:-0.5px}
+header p{color:#888;font-size:0.9em;margin-top:8px}
+header p a{margin:0 8px;color:#888}
+header p a:hover{color:#0969da}
+.container{max-width:720px;margin:0 auto;padding:40px 20px}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px;align-items:center}
+.filter-tag{display:inline-block;padding:4px 14px;border:1px solid #ddd;border-radius:20px;font-size:0.85em;color:#666;cursor:pointer;transition:all .2s}
+.filter-tag:hover,.filter-tag.active{background:#222;color:#fff;border-color:#222}
+.filter-tag .count{opacity:.6;font-size:.85em;margin-left:4px}
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:#eee}
+.year-marker{font-size:0.85em;color:#999;font-weight:600;margin:30px 0 15px;padding-left:0;position:relative}
+.year-marker::before{content:'';position:absolute;left:-24px;top:50%;transform:translateY(-50%);width:10px;height:10px;border-radius:50%;background:#ddd;border:2px solid #fff}
+.post-item{margin-bottom:28px;position:relative}
+.post-item::before{content:'';position:absolute;left:-24px;top:10px;width:8px;height:8px;border-radius:50%;background:#ccc;border:2px solid #fff;box-shadow:0 0 0 2px #fff}
+.post-date{font-size:0.8em;color:#aaa;margin-bottom:2px}
+.post-title{font-size:1.05em;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.post-title a:hover{color:#0969da}
+.post-tags{display:flex;gap:6px;flex-wrap:wrap}
+.post-tag{padding:1px 10px;border-radius:10px;font-size:0.75em;background:#f5f5f5;color:#666}
+.post-tag.project{background:#e8f0fe;color:#0550ae}
+.post-tag.life{background:#fef7e0;color:#7c4a00}
+.post-tag.work{background:#e6f4ea;color:#1e7e34}
+.post-tag.ai{background:#f3e8fd;color:#840}
+.post-excerpt{font-size:0.88em;color:#888;margin-top:4px;display:none}
+.empty{text-align:center;color:#ccc;padding:60px 0;font-size:0.95em}
+footer{text-align:center;padding:40px 20px;color:#aaa;font-size:0.8em;border-top:1px solid #eee;margin-top:60px}
+footer a{color:#aaa}
+@media(max-width:600px){.container{padding:30px 16px}}
+</style>
 </head>
-
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
-
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
-    </div>
+<body>
+<header>
+  <h1>iDiana</h1>
+  <p>
+    <a href="/projects/skyline-demo-outline.html">📋 Skyline Demo</a>
+    <a href="/tags">🏷️ 标签</a>
+    <a href="/2022">📁 归档</a>
+  </p>
+</header>
+<div class="container">
+  <div class="filter-bar" id="filterBar">
+    <span class="filter-tag active" data-tag="all">全部</span>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">iDiana</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
+  <div class="timeline" id="postList"></div>
 </div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
-  </ul>
-</nav>
-
-
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content index posts-expand">
-            
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/16/%E5%86%99%E5%9C%A83%E6%9C%8816%E5%8F%B7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Alex Lee">
-      <meta itemprop="description" content="请来一束追光照亮这海底">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="iDiana">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/16/%E5%86%99%E5%9C%A83%E6%9C%8816%E5%8F%B7/" class="post-title-link" itemprop="url">写在3月16号</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-03-16 19:23:22 / 修改时间：19:24:56" itemprop="dateCreated datePublished" datetime="2022-03-16T19:23:22+08:00">2022-03-16</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在经历了连续两天三次的6000分渡劫之旅之后，终于凭借着我从没玩过的三个英雄，大范、巫妖王、米尔豪斯成功渡劫，晋级6000分。<br>6013我来了！！</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/15/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8F%8A%E5%B1%80%E5%9F%9F%E7%BD%91%E8%AE%BF%E9%97%AE%EF%BC%88TOMCAT%EF%BC%89%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Alex Lee">
-      <meta itemprop="description" content="请来一束追光照亮这海底">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="iDiana">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/15/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E5%8F%8A%E5%B1%80%E5%9F%9F%E7%BD%91%E8%AE%BF%E9%97%AE%EF%BC%88TOMCAT%EF%BC%89%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">博客搭建及局域网访问（TOMCAT）总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-03-15 23:35:53" itemprop="dateCreated datePublished" datetime="2022-03-15T23:35:53+08:00">2022-03-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-16 00:25:52" itemprop="dateModified" datetime="2022-03-16T00:25:52+08:00">2022-03-16</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.博客搭建（3.8~3.14）<br>参考文档：<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102592286">https://zhuanlan.zhihu.com/p/102592286</a></p>
-<p>在整个过程中没有遇到很大的阻碍，为数不多的卡顿在于hexo在安装过后，输入命令时返回’command not found‘，解决方法是在前面加入npx<br>后面我发现可能是当时路径设置有问题，不过也没来得及检查。<br>关于npx与npm的区别请见：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/327989736/answer/787995048">https://www.zhihu.com/question/327989736/answer/787995048</a></p>
-<p>⭐⭐⭐很关键的一点，设置环境变量的时候一定要看清是不是全局，别删错，别覆盖！就算删错或者覆盖了，别重启别关机！！⭐⭐⭐<br>来自lzs同学的经历：<br>进入cmd 执行命令 [echo %PATH]，将输出的结果复制粘贴到系统环境变量即可（分号是隔开的）</p>
-<p>2.TOMCAT<br>参考文档：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40691189/article/details/80156695">https://blog.csdn.net/qq_40691189/article/details/80156695</a></p>
-<p>相比于上一个，前期没有什么大问题，但在后期卡住了，没法实现让局域网内的其他设备访问网站（即只能本地浏览）。<br>在经过自己思考并请教林老师之后，摸索出来了两条解决办法：<br>1.可能是防火墙出现了问题，新建一个入站规则或者直接把防火墙关掉即可解决（别忘了重新启动服务器，不然就会像我一样以为没有用，半天才发现服务器没启动）<br>2.经过林老师的提醒，为了实现任意网段的访问，在tomcat的server.xml配置文件中<connector>标签中加上 address&#x3D;”0:0:0:0” 属性，然后再次启动服务器，这下就成功了。</p>
-<p>参考文档：<br><a target="_blank" rel="noopener" href="https://www.cxyzjd.com/article/FDGFGFDGFD/80565406">https://www.cxyzjd.com/article/FDGFGFDGFD/80565406</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/cuRest/article/details/60879625">https://blog.csdn.net/cuRest/article/details/60879625</a></p>
-<p>总结：<br>都是很基本的东西，在整个完成过程中没有产生很大的问题，但有些细节部分是值得深究的，比如说为什么加上’address&#x3D;“0：0：0：0”‘之后可以实现全网段访问，又或者npx与npm的区别，用心了解都会接触到核心部分的知识。关于全网段访问请见：<a target="_blank" rel="noopener" href="https://www.i4k.xyz/article/yjh314/52209401">https://www.i4k.xyz/article/yjh314/52209401</a><br>对我来说更加有趣的事情是在查阅文档资料的过程中，我遇到的问题在五年前也有一个大学生为此冥思苦想，百思不得其解，于是当时的他提出了这个问题。也许他也想不到，自己的这个问题会在五年后为同样的一个人提供帮助。虽然我不知道我能帮助到谁，但有这样的一种想法，不也是很浪漫吗？</p>
-<p>（上传文档的时候一定要注意hexo的yml配置文件！！该加的空格一定要加！不然就会出现“YAMLException: can not read a block mapping entry; a multiline key may not be an implicit key”，本来今天能提前二十分钟睡觉的。）</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/15/%E5%BA%8F%E7%AB%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Alex Lee">
-      <meta itemprop="description" content="请来一束追光照亮这海底">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="iDiana">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/15/%E5%BA%8F%E7%AB%A0/" class="post-title-link" itemprop="url">序章</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-03-15 17:40:07 / 修改时间：23:36:34" itemprop="dateCreated datePublished" datetime="2022-03-15T17:40:07+08:00">2022-03-15</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>总感觉，第一章照理来说应该是写一些东西的，但思来想去也不知道该写什么。<br>“纸上得来终觉浅，绝知此事要躬行。”<br>是我一直以来都很喜欢的一句话，只可惜大多数情况下自己没有很好的执行到位。<br>不过这次配置环境变量的时候出了不少问题，卡了一段时间，但总体来说还是很好的。<br>就到这里吧？</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/03/14/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Alex Lee">
-      <meta itemprop="description" content="请来一束追光照亮这海底">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="iDiana">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/14/hello-world/" class="post-title-link" itemprop="url">欢迎</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-03-14 17:17:54" itemprop="dateCreated datePublished" datetime="2022-03-14T17:17:54+08:00">2022-03-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-15 17:36:57" itemprop="dateModified" datetime="2022-03-15T17:36:57+08:00">2022-03-15</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>欢迎来到我的博客，如果您想进入我的GitHub界面，可以点击 <a target="_blank" rel="noopener" href="https://github.com/KyoukoLi">KyoukoLi</a> 或者向我发送 <a href="zhyli403@gmail.com">邮件</a>。</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-
-
-
-          </div>
-          
-
+<footer>
+  <p><a href="https://github.com/KyoukoLi" target="_blank">GitHub</a> · 朕说</p>
+</footer>
 <script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
+// Built-in posts (fallback if JSON fails)
+const POSTS = [
+  {date:"2026-03-30",year:"2026",title:"Skyline Demo — 故事驱动交互 PRD",tags:["AI","项目"],"url":"/projects/skyline-demo-outline.html","excerpt":"完整的故事驱动交互 Demo PRD，包含三层角色体系、功能分层与技术验证标准。","type":"project"},
+  {date:"2026-03-30",year:"2026",title:"青云废墟奇遇记 — 故事脚本",tags:["AI"],"url":"/projects/skyline-story-script.html","excerpt":"九幕修仙互动故事脚本，含三条支线与多角色动态调度设计。","type":"ai"}
+];
+const TAG_COLORS = {project:"project",ai:"ai",life:"life",work:"work"};
+const TAG_NAMES = {project:"项目复盘",ai:"AI随笔",life:"生活感悟",work:"工作"};
+
+// Build filter tags
+const allTags = {};
+POSTS.forEach(p => p.tags.forEach(t => allTags[t] = (allTags[t]||0)+1));
+const tagOrder = ['AI','项目','生活','工作','随笔'];
+const sorted = Object.keys(allTags).sort((a,b)=>(tagOrder.indexOf(a)===-1?99:tagOrder.indexOf(a))-(tagOrder.indexOf(b)===-1?99:tagOrder.indexOf(b)));
+sorted.forEach(tag => {
+  const el = document.createElement('span');
+  el.className = 'filter-tag';
+  el.dataset.tag = tag;
+  el.innerHTML = TAG_NAMES[tag]||tag + '<span class="count">(' + allTags[tag] + ')</span>';
+  document.getElementById('filterBar').appendChild(el);
+});
+
+// Render posts
+function renderPosts(filter) {
+  const list = document.getElementById('postList');
+  list.innerHTML = '';
+  const filtered = filter === 'all' ? POSTS : POSTS.filter(p => p.tags.includes(filter));
+  if (filtered.length === 0) { list.innerHTML = '<div class="empty">暂无文章</div>'; return; }
+  let curYear = '';
+  filtered.forEach(p => {
+    if (p.year !== curYear) {
+      curYear = p.year;
+      const y = document.createElement('div');
+      y.className = 'year-marker';
+      y.textContent = curYear + ' 年';
+      list.appendChild(y);
     }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
+    const el = document.createElement('div');
+    el.className = 'post-item';
+    const tags = p.tags.map(t => '<span class="post-tag ' + (TAG_COLORS[t]||'') + '">' + (TAG_NAMES[t]||t) + '</span>').join('');
+    el.innerHTML = '<div class="post-date">' + p.date + '</div><div class="post-title"><a href="' + p.url + '">' + p.title + '</a></div><div class="post-tags">' + tags + '</div>';
+    list.appendChild(el);
   });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
+}
+
+// Load posts.json
+fetch('/posts/posts.json').then(r=>r.json()).then(data=>{
+  if(data.posts&&data.posts.length){POSTS.length=0;POSTS.push(...data.posts.map(p=>({...p,type:p.tags[0]})))}
+  renderPosts('all');
+}).catch(()=>renderPosts('all'));
+
+// Filter
+document.getElementById('filterBar').addEventListener('click', e => {
+  const tag = e.target.dataset.tag;
+  if (!tag) return;
+  document.querySelectorAll('.filter-tag').forEach(el => el.classList.toggle('active', el.dataset.tag === tag));
+  renderPosts(tag);
+});
 </script>
-
-        </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-      </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Alex Lee</p>
-  <div class="site-description" itemprop="description">请来一束追光照亮这海底</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">4</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">2</span>
-        <span class="site-state-item-name">标签</span>
-      </div>
-  </nav>
-</div>
-
-
-
-      </div>
-
-    </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 
-  <span itemprop="copyrightYear">2022</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Alex Lee</span>
-</div>
-  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
-
-        
-
-
-
-
-
-
-
-
-      </div>
-    </footer>
-  </div>
-
-  
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
-
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
-
-
-<script src="/js/schemes/muse.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  
-
 </body>
 </html>
