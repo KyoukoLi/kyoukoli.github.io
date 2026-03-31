@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>直播虚拟宠物 MVP — 技术方案</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 30px 20px; line-height: 1.9; color: #1f2328; background: #fff; font-size: 15px; }
+h1 { font-size: 1.8em; color: #0969da; border-bottom: 2px solid #ddf4ff; padding-bottom: 12px; margin-top: 0; }
+h2 { font-size: 1.35em; color: #0550ae; border-bottom: 1px solid #d0d7de; padding-bottom: 6px; margin-top: 2em; }
+h3 { font-size: 1.1em; color: #0550ae; margin-top: 1.5em; }
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+p { margin: 0.7em 0; }
+ul, ol { padding-left: 1.5em; margin: 0.7em 0; }
+li { margin: 0.3em 0; }
+table.viz { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.92em; }
+table.viz th, table.viz td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; }
+table.viz th { background: #f6f8fa; font-weight: 600; }
+table.viz tr:nth-child(even) td { background: #fafbfc; }
+blockquote { margin: 1em 0; padding: 0.5em 1em; border-left: 4px solid #0969da; background: #f6f8fa; color: #57606a; }
+pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; font-size: 0.875em; line-height: 1.6; margin: 1em 0; }
+code { background: #f6f8fa; padding: 2px 5px; border-radius: 3px; font-size: 0.9em; }
+.back { margin-bottom: 1.5em; }
+.back a { color: #0550ae; font-size: 0.9em; }
+hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+.tag { display: inline-block; background: #ddf4ff; color: #0550ae; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; margin-right: 4px; }
+.tag.danger { background: #ffebe9; color: #cf222e; }
+.tag.success { background: #dafbe1; color: #1a7f37; }
+@media(max-width:600px) { body { padding: 15px 12px; font-size: 14px; } }
+</style>
+</head>
+<body>
+<div class="back"><a href="/">&#8592; 返回首页</a></div>
+<h1>直播虚拟宠物 MVP — 技术方案</h1>
+<p><span class="tag">MVP</span><span class="tag success">v1.0</span><span class="tag">2026-03-31</span></p>
+
+<h2>一、MVP 目标</h2>
+<p>用<strong>最小代码</strong>跑通核心价值链：一个用户领养宠物 → 喂食升级 → 房间内可见 → 排行榜展示。</p>
+<blockquote>
+<p>设计原则：<strong>少即是多</strong>。MVP 不追求功能完整，追求核心体验闭环。</p>
+</blockquote>
+
+<h2>二、MVP 功能范围</h2>
+
+<h3>2.1 包含（To Do）</h3>
+<ul>
+<li><strong>领养蛋</strong>：用户发弹幕「领养一个蛋」→ 系统下发宠物蛋</li>
+<li><strong>弹幕加速孵化</strong>：房间内任意人发弹幕 → 倒计时减少</li>
+<li><strong>宠物出场</strong>：孵化完成后，宠物 Lottie 动画出现在直播间挂件位</li>
+<li><strong>喂食升级</strong>：发弹幕「喂食」→ 宠物饱食度恢复，等级+1</li>
+<li><strong>房间排行</strong>：显示当前房间内宠物等级 Top 10</li>
+<li><strong>主播开播buff</strong>：开播时经验加成（+50%），随时间递减</li>
+</ul>
+
+<h3>2.2 不包含（Not To Do）</h3>
+<ul>
+<li class="tag danger">✗ AI 对话能力</li>
+<li class="tag danger">✗ 多宠物收藏柜</li>
+<li class="tag danger">✗ 稀有度体系</li>
+<li class="tag danger">✗ 进化分支</li>
+<li class="tag danger">✗ 主播控制台</li>
+<li class="tag danger">✗ 跨房间排行</li>
+<li class="tag danger">✗ PK 系统</li>
+</ul>
+
+<h2>三、核心用户流程</h2>
+
+<pre>用户A 进直播间
+    ↓
+发弹幕「领养一个蛋」
+    ↓
+获得宠物蛋（倒计时 5 分钟）
+    ↓
+房间内大家发弹幕加速（「加油」「快出来」等）
+    ↓
+倒计时归零 → 宠物孵化出现
+    ↓
+用户A 继续发弹幕「喂食」→ 宠物升级
+    ↓
+宠物等级在房间排行榜上可见
+    ↓
+主播开播时，房间内所有宠物获得 5 分钟 +50% 经验加成</pre>
+
+<h2>四、数据模型</h2>
+
+<h3>4.1 宠物（Pet）</h3>
+<pre>Pet {
+  pet_id:        string   // 唯一标识
+  user_id:       string   // 所属用户
+  room_id:       string   // 当前所在房间（停播时空）
+  name:          string   // 宠物名（默认随机）
+  level:         int      // 当前等级（初始 1）
+  exp:           int      // 当前经验值
+  exp_to_next:   int      // 升级所需经验（固定阈值）
+  hunger:        float    // 饱食度 0.0~1.0
+  state:         enum     // egg | hatching | active | sleeping
+  hatched_at:    int      // 孵化时间戳
+  created_at:    int      // 创建时间戳
+}</pre>
+
+<h3>4.2 房间（Room）</h3>
+<pre>Room {
+  room_id:         string   // 房间 ID
+  host_id:         string   // 主播 ID
+  is_live:         bool     // 是否正在直播
+  live_started_at: int      // 开播时间戳
+  egg_hatch_speed: int      // 全房间孵化加速计数
+}</pre>
+
+<h3>4.3 经验值计算</h3>
+<table class="viz">
+<thead><tr><th>操作</th><th>经验值</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>发弹幕「喂食」</td><td>+10 XP</td><td>基础行为</td></tr>
+<tr><td>收到礼物（任意）</td><td>+礼物价值 × 10 XP</td><td>按快手礼物价值换算</td></tr>
+<tr><td>主播开播中</td><td>以上全部 × 1.5</td><td>开播 buff（5 分钟内）</td></tr>
+<tr><td>开播 5-30 分钟</td><td>以上全部 × 1.2</td><td>buff 衰减</td></tr>
+<tr><td>开播 30 分钟以上</td><td>以上全部 × 1.1</td><td>buff 进一步衰减</td></tr>
+</tbody>
+</table>
+<p>升级所需经验：<code>level × 100 XP</code>（Lv.1→Lv.2 需要 100 XP，Lv.2→Lv.3 需要 200 XP，以此类推）</p>
+
+<h3>4.4 孵化加速计算</h3>
+<pre>每条弹幕减少倒计时 3 秒
+上限：最多 60 条弹幕（即最多加速 180 秒 = 3 分钟）
+原始倒计时：5 分钟（300 秒）
+最快孵化：2 分钟（300 - 180）</pre>
+
+<h2>五、技术架构</h2>
+
+<pre>┌──────────────────────────────────────┐
+│        快手开放平台（事件订阅）          │
+│  弹幕 WebSocket / 礼物回调 / 开播事件   │
+└──────────────┬───────────────────────┘
+               │
+┌──────────────▼───────────────────────┐
+│           Pet Engine（宠物引擎）         │
+│                                      │
+│  ┌──────────┐  ┌──────────────────┐  │
+│  │ 弹幕解析  │→│  宠物状态机 (egg/ │  │
+│  │ & 命令   │  │  hatching/active) │  │
+│  └──────────┘  └──────────────────┘  │
+│  ┌──────────┐  ┌──────────────────┐  │
+│  │ 经验计算  │→│   升级 & 排行计算   │  │
+│  │ (+buff)  │  │                  │  │
+│  └──────────┘  └──────────────────┘  │
+└──────────────┬───────────────────────┘
+               │
+┌──────────────▼───────────────────────┐
+│    Redis（宠物状态 + 房间排行）          │
+│                                      │
+│  pet:{pet_id}   → Hash (宠物数据)      │
+│  room:{room_id} → Hash (房间状态)      │
+│  rank:{room_id} → SortedSet (排行)    │
+└──────────────┬───────────────────────┘
+               │
+┌──────────────▼───────────────────────┐
+│         渲染层（直播间挂件）             │
+│                                      │
+│  Lottie 动画（宠物外观）               │
+│  排行浮层（Top 10）                   │
+│  弹幕气泡（喂食成功提示）               │
+└──────────────────────────────────────┘</pre>
+
+<h3>5.1 弹幕命令解析</h3>
+<pre>func parseCommand(text string) Command {
+  switch text {
+  case "领养一个蛋":         return CMD_ADOPT
+  case "喂食":               return CMD_FEED
+  default:                   return CMD_ACCELERATE  // 其余所有弹幕均加速孵化
+  }
+}</pre>
+
+<h3>5.2 关键实现细节</h3>
+
+<ul>
+<li><strong>弹幕防刷</strong>：同一用户每 3 秒最多触发 1 次，避免刷屏</li>
+<li><strong>宠物休眠</strong>：饱食度归零后宠物进入「sleeping」状态，不显示动画，只在喂食后恢复</li>
+<li><strong>房间状态</strong>：主播停播时，<code>is_live=false</code>，buff 消失，宠物状态冻结（不消失）</li>
+<li><strong>排行榜</strong>：每次喂食/收礼物后更新 Redis SortedSet，渲染层每 5 秒拉取一次</li>
+<li><strong>Redis 键设计</strong>：
+  <ul>
+    <li><code>pet:{pet_id}</code> — Hash，宠物全量数据</li>
+    <li><code>room:{room_id}:rank</code> — SortedSet，分数=level，用户ID=member</li>
+    <li><code>room:{room_id}:info</code> — Hash，房间状态</li>
+  </ul>
+</li>
+</ul>
+
+<h2>六、部署方案（推荐）</h2>
+<table class="viz">
+<thead><tr><th>组件</th><th>推荐方案</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>宠物引擎</td><td>Railway / Zeabur 单节点</td><td>轻量 Go 服务，高并发弹幕需 Kafka</td></tr>
+<tr><td>状态存储</td><td>Redis Cloud</td><td>减少自运维，支持 1M QPS</td></tr>
+<tr><td>动画渲染</td><td>快手小窗 / AR 挂件</td><td>需快手开放平台审核接入</td></tr>
+<tr><td>LLM（可选）</td><td>MiniMax / 智谱 GLM</td><td>MVP 阶段不需要，后续加</td></tr>
+</tbody>
+</table>
+
+<h2>七、MVP 里程碑</h2>
+
+<table class="viz">
+<thead><tr><th>阶段</th><th>目标</th><th>验收标准</th></tr></thead>
+<tbody>
+<tr><td>M1</td><td>本地跑通领养→孵化→喂食→升级闭环</td><td>本地脚本模拟弹幕事件，宠物从 Lv.1 到 Lv.3</td></tr>
+<tr><td>M2</td><td>接入快手测试环境 WebSocket</td><td>真实弹幕能触发宠物行为</td></tr>
+<tr><td>M3</td><td>渲染层接入（模拟挂件）</td><td>宠物动画和排行在页面可见</td></tr>
+<tr><td>M4</td><td>灰度 1 个真实主播</td><td>直播 30 分钟，验证互动数据</td></tr>
+</tbody>
+</table>
+
+<h2>八、风险与对策</h2>
+
+<table class="viz">
+<thead><tr><th>风险</th><th>概率</th><th>对策</th></tr></thead>
+<tbody>
+<tr><td>快手开放平台不支持弹幕 WebSocket 订阅</td><td>中</td><td>改用轮询 API 或申请白名单权限</td></tr>
+<tr><td>直播间挂件接入门槛高（需审核）</td><td>中</td><td>MVP 阶段先用 H5 页面模拟，嵌入 OBS 推流</td></tr>
+<tr><td>弹幕防刷失效导致经验值被刷</td><td>低</td><td>Redis 计数 + 滑动窗口限速</td></tr>
+<tr><td>Redis 宕机宠物数据丢失</td><td>低</td><td>宠物数据持久化到 MySQL（每小时同步）</td></tr>
+</tbody>
+</table>
+
+<hr>
+<p><em>MVP 方案由 AI 辅助设计 | 2026-03-31</em></p>
+</body>
+</html>
