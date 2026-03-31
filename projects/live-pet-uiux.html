@@ -62,52 +62,13 @@ hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
 </style>
 </head>
 <body>
-<div id="copy-bar" style="position:sticky;top:0;z-index:100;background:#0969da;color:#fff;text-align:center;padding:8px 16px;font-size:13px;cursor:pointer;border-radius:0 0 8px 8px;box-shadow:0 2px 8px rgba(9,105,218,0.3);display:flex;align-items:center;justify-content:center;gap:8px;" onclick="copyAll()" title="复制全文到剪贴板"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg><span id="copy-label">复制全文</span></div>
-<script>
-function copyAll(){
-  const clone = document.body.cloneNode(true);
-  clone.querySelectorAll("#copy-bar, .back, script, style").forEach(el => el.remove());
-  navigator.clipboard.writeText(clone.innerText || clone.textContent).then(() => {
-    document.getElementById("copy-label").textContent = "已复制 ✓";
-    setTimeout(() => document.getElementById("copy-label").textContent = "复制全文", 2000);
-  }).catch(() => {
-    document.getElementById("copy-label").textContent = "复制失败";
-    setTimeout(() => document.getElementById("copy-label").textContent = "复制全文", 2000);
-  });
-}
-</script>
-<div class="back"><a href="/">&#8592; 返回首页</a></div>
-<h1>直播虚拟宠物 MVP — UI/UX 设计方案</h1>
+<style>
+.copy-btn{position:sticky;top:12px;float:right;z-index:99;background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:4px 10px;font-size:12px;color:#57606a;cursor:pointer;transition:all .2s;line-height:1.5;}
+.copy-btn:hover{background:#fff;border-color:#0969da;color:#0969da;}
+.copy-btn.copied{background:#dafbe1;border-color:#2da44e;color:#1a7f37;}
+</style>
+<div class="copy-btn" id="copy-btn" onclick="copyPage()" title="复制为 Markdown 格式（粘贴到 Notion/飞书）">📋 复制</div>
 
-<h2>一、设计原则</h2>
-<blockquote>
-<p>直播间 UI 有且只有一个核心原则：<strong>不抢主播的注意力</strong>。</p>
-<p>宠物是直播间氛围的"背景音"，不是主角。用户在欣赏主播的间隙，瞥一眼宠物觉得有趣，就够了。</p>
-</blockquote>
-<ul>
-<li><strong>轻量化</strong>：UI 占屏幕面积不超过 15%，不遮挡主播画面</li>
-<li><strong>即时反馈</strong>：用户发弹幕后 1 秒内有视觉反馈</li>
-<li><strong>存在感强但不过度</strong>：宠物有持续微动画（呼吸/摇晃），但静止时不占视觉焦点</li>
-<li><strong>颜色克制</strong>：主体颜色不超过 3 种，避免和主播画面撞色</li>
-</ul>
-
-<h2>二、核心界面区域</h2>
-
-<h3>2.1 宠物挂件（核心区域）</h3>
-<p>位置：直播间画面右下角，固定浮层。</p>
-
-<div class="wf-container">
-<div class="wf-title">宠物状态示意</div>
-<div class="sim-screen">
-  <div class="sim-header">直播间画面</div>
-  <div class="sim-video">
-    <div class="sim-barrage" style="top:10px;">加油加油！快出来吧！👆</div>
-    <div class="sim-barrage" style="top:30px;animation-delay:1s;">喂食喂食！</div>
-    <div class="sim-barrage" style="top:50px;animation-delay:2s;">摸摸头~</div>
-    <div class="sim-pet">🐾</div>
-    <div class="sim-hunger">
-      <span class="wf-label">饱食度</span>
-      <div class="sim-hunger-bar"><div class="sim-hunger-fill" style="width:75%"></div></div>
     </div>
     <div class="sim-feed-hint">发「喂食」继续升级 ↑</div>
     <div class="sim-toast">🐾 Lv.3 ↑</div>
@@ -291,5 +252,73 @@ function copyAll(){
 
 <hr>
 <p><em>UI/UX 方案由 AI 辅助设计 | 2026-03-31</em></p>
+
+<script>
+function copyPage(){
+  var btn=document.getElementById('copy-btn');
+  var clone=document.createElement('div');
+  // copy main content
+  var main=document.querySelector('body');
+  ['style','script','#copy-bar','.copy-btn','.back'].forEach(function(sel){
+    main.querySelectorAll(sel).forEach(function(e){e.remove();});
+  });
+  // build markdown
+  var md='';
+  function mdEscape(s){return s.replace(/([*_`#\])/g,'\$1');}
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function(el){
+    var level=parseInt(el.tagName[1]);
+    md+='
+'+'#'.repeat(level)+' '+el.innerText+'
+';
+  });
+  document.querySelectorAll('p').forEach(function(el){
+    if(el.innerText.trim())md+=el.innerText+'
+';
+  });
+  document.querySelectorAll('ul,ol').forEach(function(list){
+    list.querySelectorAll('li').forEach(function(li){
+      var prefix=list.tagName=='OL'?'1. ':'- ';
+      md+=prefix+li.innerText+'
+';
+    });
+    md+='
+';
+  });
+  document.querySelectorAll('table.viz').forEach(function(t){
+    var rows=[];
+    t.querySelectorAll('tr').forEach(function(tr,i){
+      var cells=Array.from(tr.querySelectorAll('th,td')).map(function(c){return mdEscape(c.innerText.trim());});
+      rows.push('| '+cells.join(' | ')+' |');
+      if(i===0)rows.push('| '+cells.map(function(){return'---';}).join(' | ')+' |');
+    });
+    md+=rows.join('
+')+'
+
+';
+  });
+  document.querySelectorAll('pre').forEach(function(el){
+    md+='
+```
+'+el.innerText+'
+```
+
+';
+  });
+  document.querySelectorAll('blockquote').forEach(function(el){
+    md+='> '+el.innerText+'
+
+';
+  });
+  navigator.clipboard.writeText(md).then(function(){
+    btn.textContent='✅ 已复制';
+    btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='📋 复制';btn.classList.remove('copied');},2000);
+  }).catch(function(){
+    btn.textContent='❌ 失败';
+    setTimeout(function(){btn.textContent='📋 复制';},2000);
+  });
+}
+</script>
+
 </body>
 </html>

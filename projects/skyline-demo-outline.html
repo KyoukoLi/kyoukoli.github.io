@@ -23,20 +23,14 @@ pre code { background: none; padding: 0; }
 .back a { color: #0550ae; font-size: 0.9em; }
 hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
 @media(max-width:600px) { body { padding: 15px 12px; font-size: 14px; } }</style></head><body>
+<style>
+.copy-btn{position:sticky;top:12px;float:right;z-index:99;background:#f6f8fa;border:1px solid #d0d7de;border-radius:6px;padding:4px 10px;font-size:12px;color:#57606a;cursor:pointer;transition:all .2s;line-height:1.5;}
+.copy-btn:hover{background:#fff;border-color:#0969da;color:#0969da;}
+.copy-btn.copied{background:#dafbe1;border-color:#2da44e;color:#1a7f37;}
+</style>
+<div class="copy-btn" id="copy-btn" onclick="copyPage()" title="复制为 Markdown 格式（粘贴到 Notion/飞书）">📋 复制</div>
 <div id="copy-bar" style="position:sticky;top:0;z-index:100;background:#0969da;color:#fff;text-align:center;padding:8px 16px;font-size:13px;cursor:pointer;border-radius:0 0 8px 8px;box-shadow:0 2px 8px rgba(9,105,218,0.3);display:flex;align-items:center;justify-content:center;gap:8px;" onclick="copyAll()" title="复制全文到剪贴板"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg><span id="copy-label">复制全文</span></div>
-<script>
-function copyAll(){
-  const clone = document.body.cloneNode(true);
-  clone.querySelectorAll("#copy-bar, .back, script, style").forEach(el => el.remove());
-  navigator.clipboard.writeText(clone.innerText || clone.textContent).then(() => {
-    document.getElementById("copy-label").textContent = "已复制 ✓";
-    setTimeout(() => document.getElementById("copy-label").textContent = "复制全文", 2000);
-  }).catch(() => {
-    document.getElementById("copy-label").textContent = "复制失败";
-    setTimeout(() => document.getElementById("copy-label").textContent = "复制全文", 2000);
-  });
-}
-</script><div class="back"><a href="/">&#8592; 返回首页</a></div><h1>故事驱动交互 Demo — 功能大纲</h1><h2>一、核心目标</h2><p>用<strong>完整故事</strong>驱动 Demo，测试平台在<strong>短视频/互动叙事</strong>场景下的核心能力边界。</p><hr><h2>二、三层角色体系</h2><table class="viz"><thead><tr><th>角色</th><th>职责</th><th>Demo 阶段</th></tr></thead><tbody><tr><td><strong>平台</strong></td><td>提供 AI 能力、对话引擎、角色托管</td><td>= 创作者</td></tr><tr><td><strong>创作者</strong></td><td>设计角色、编写故事大纲、定义世界观</td><td>= 平台</td></tr><tr><td><strong>用户（体验者）</strong></td><td>与角色对话、消费故事内容</td><td>独立</td></tr></tbody></table><div class="txt"><span class="hint">&#128203; 全选下方表格复制，粘贴到 Notion 自动变成表格</span>+─────────+────────────────────+─────────+
+<div class="back"><a href="/">&#8592; 返回首页</a></div><h1>故事驱动交互 Demo — 功能大纲</h1><h2>一、核心目标</h2><p>用<strong>完整故事</strong>驱动 Demo，测试平台在<strong>短视频/互动叙事</strong>场景下的核心能力边界。</p><hr><h2>二、三层角色体系</h2><table class="viz"><thead><tr><th>角色</th><th>职责</th><th>Demo 阶段</th></tr></thead><tbody><tr><td><strong>平台</strong></td><td>提供 AI 能力、对话引擎、角色托管</td><td>= 创作者</td></tr><tr><td><strong>创作者</strong></td><td>设计角色、编写故事大纲、定义世界观</td><td>= 平台</td></tr><tr><td><strong>用户（体验者）</strong></td><td>与角色对话、消费故事内容</td><td>独立</td></tr></tbody></table><div class="txt"><span class="hint">&#128203; 全选下方表格复制，粘贴到 Notion 自动变成表格</span>+─────────+────────────────────+─────────+
 │ 角色      │ 职责                 │ Demo 阶段 │
 +═════════+════════════════════+═════════+
 │ 平台      │ 提供 AI 能力、对话引擎、角色托管 │ = 创作者   │
@@ -105,4 +99,72 @@ function copyAll(){
 │ 心情背景图切换    │ 🟠增强 │ 情绪变化驱动图片变化     │
 │ TTS 多角色多语气 │ 🟠增强 │ 对话台词有语音，叙述无语音  │
 │ 音画同步       │ 🟠增强 │ 语音 + 图片 + 文字同步 │
-+────────────+─────+────────────────+</div></body></html>
++────────────+─────+────────────────+</div>
+<script>
+function copyPage(){
+  var btn=document.getElementById('copy-btn');
+  var clone=document.createElement('div');
+  // copy main content
+  var main=document.querySelector('body');
+  ['style','script','#copy-bar','.copy-btn','.back'].forEach(function(sel){
+    main.querySelectorAll(sel).forEach(function(e){e.remove();});
+  });
+  // build markdown
+  var md='';
+  function mdEscape(s){return s.replace(/([*_`#\])/g,'\$1');}
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function(el){
+    var level=parseInt(el.tagName[1]);
+    md+='
+'+'#'.repeat(level)+' '+el.innerText+'
+';
+  });
+  document.querySelectorAll('p').forEach(function(el){
+    if(el.innerText.trim())md+=el.innerText+'
+';
+  });
+  document.querySelectorAll('ul,ol').forEach(function(list){
+    list.querySelectorAll('li').forEach(function(li){
+      var prefix=list.tagName=='OL'?'1. ':'- ';
+      md+=prefix+li.innerText+'
+';
+    });
+    md+='
+';
+  });
+  document.querySelectorAll('table.viz').forEach(function(t){
+    var rows=[];
+    t.querySelectorAll('tr').forEach(function(tr,i){
+      var cells=Array.from(tr.querySelectorAll('th,td')).map(function(c){return mdEscape(c.innerText.trim());});
+      rows.push('| '+cells.join(' | ')+' |');
+      if(i===0)rows.push('| '+cells.map(function(){return'---';}).join(' | ')+' |');
+    });
+    md+=rows.join('
+')+'
+
+';
+  });
+  document.querySelectorAll('pre').forEach(function(el){
+    md+='
+```
+'+el.innerText+'
+```
+
+';
+  });
+  document.querySelectorAll('blockquote').forEach(function(el){
+    md+='> '+el.innerText+'
+
+';
+  });
+  navigator.clipboard.writeText(md).then(function(){
+    btn.textContent='✅ 已复制';
+    btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='📋 复制';btn.classList.remove('copied');},2000);
+  }).catch(function(){
+    btn.textContent='❌ 失败';
+    setTimeout(function(){btn.textContent='📋 复制';},2000);
+  });
+}
+</script>
+
+</body></html>
