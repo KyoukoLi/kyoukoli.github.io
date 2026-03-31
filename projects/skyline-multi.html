@@ -114,9 +114,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 </div>
 
 <script>
-const API_KEY = 'AIzaSyBGx_4aDfpg6CN3dPlax3CtXwpznCuUP8o';
-const MODEL = 'gemini-2.5-flash';
-const API = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
+// API 请求通过本地 SillyTavern 代理转发（API key 不暴露在前端）
+const TUNNEL = 'https://observation-minneapolis-pretty-fiscal.trycloudflare.com';
+const API = TUNNEL + '/api/google/chat/proxy';
 
 const SYSTEM = `【世界观】九洲大陆，修仙世界。境界：炼气、筑基、金丹、元婴、化神。
 【核心人物】
@@ -188,12 +188,10 @@ function setLoading(loading) {
 }
 
 async function callGemini(prompt) {
-  // 用 systemInstruction + 当前 prompt 作为单轮调用
-  // 历史通过 prompt 本身传递（上面 callGemini 的调用方已经拼接好了）
   const body = {
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    systemInstruction: { role: 'system', parts: [{ text: SYSTEM }] },
-    generationConfig: { maxOutputTokens: 800, temperature: 0.85, topP: 0.9 }
+    prompt: prompt,
+    system: SYSTEM,
+    maxTokens: 500
   };
 
   const resp = await fetch(API, {
