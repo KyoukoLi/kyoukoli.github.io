@@ -114,10 +114,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 </div>
 
 <script>
-// Gemini API 直接调用
-const API_KEY = 'AIzaSyAekxnseux5S_nBWAnYcGADHVT7I9FtSTg';
-const MODEL = 'gemini-2.5-flash';
-const API = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
+// API 请求通过本地代理转发
+const TUNNEL = 'https://treatments-fired-puts-starts.trycloudflare.com';
+const API = TUNNEL + '/chat';
 
 const SYSTEM = `【世界观】九洲大陆，修仙世界。境界：炼气、筑基、金丹、元婴、化神。
 【核心人物】
