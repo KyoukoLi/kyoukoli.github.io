@@ -8,98 +8,95 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#0a0a12;color:#fff;min-height:100vh;display:flex;flex-direction:column}
 
-/* 背景 */
+/* 背景层 */
 .bg{position:fixed;inset:0;z-index:0;overflow:hidden}
-.bg-layer{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,#1a1040 0%,#0a0a12 60%)}
-.bg-star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:pulse var(--d,3s) ease-in-out infinite;animation-delay:var(--dl,0s)}
-@keyframes pulse{0%,100%{opacity:0.1}50%{opacity:0.8}}
+.bg-layer{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,#1a1040 0%,#0a0a12 60%);transition:opacity 1s}
+.bg-mist{position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Ccircle cx='200' cy='200' r='150' fill='none' stroke='%23ffffff08' stroke-width='1'/%3E%3C/svg%3E") repeat;opacity:0.4;animation:spin 60s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.bg-star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:pulse var(--dur,3s) ease-in-out infinite;animation-delay:var(--delay,0s)}
+@keyframes pulse{0%,100%{opacity:0.1}50%{opacity:0.8}}
 
 /* 顶部栏 */
-.header{position:relative;z-index:10;padding:12px 20px;display:flex;align-items:center;gap:12px;background:rgba(10,10,18,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06)}
-.header-title{font-size:14px;font-weight:600;color:rgba(255,255,255,0.9)}
-.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:pulse 2s infinite}
+.header{position:relative;z-index:10;padding:12px 20px;display:flex;align-items:center;gap:12px;background:rgba(10,10,18,0.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.header-title{font-size:14px;font-weight:600;color:rgba(255,255,255,0.9);letter-spacing:0.05em}
 .header-sub{font-size:11px;color:rgba(255,255,255,0.4)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px #4ade80;animation:pulse 2s infinite}
+.status-dot.offline{background:#f87171;box-shadow:0 0 8px #f87171}
 
 /* 对话区 */
-.chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;z-index:5;position:relative}
+.chat{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;z-index:5;position:relative}
 .chat::-webkit-scrollbar{width:4px}
+.chat::-webkit-scrollbar-track{background:transparent}
 .chat::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
 
-/* 每段叙事 = 旁白 + 台词组 */
-.narrative-block{display:flex;flex-direction:column;gap:8px;animation:fadeIn 0.4s ease}
-
-/* 旁白/场景 */
-.narration{font-size:14px;line-height:1.9;color:rgba(255,255,255,0.7);padding:12px 16px;background:rgba(255,255,255,0.04);border-left:3px solid rgba(196,163,90,0.4);border-radius:0 8px 8px 0;font-style:italic}
-
-/* 台词区：多角色横向排列 */
-.dialogue-row{display:flex;flex-wrap:wrap;gap:10px}
-
-/* 单个角色台词 */
-.dialogue{margin-top:4px}
-.dlg-meta{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.dlg-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
-.dlg-name{font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.05em}
-.dlg-bubble{padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.7;word-break:break-word}
-
-/* 云霄的台词 */
-.dlg-yunxiao .dlg-avatar{background:linear-gradient(135deg,rgba(196,163,90,0.4),rgba(139,105,20,0.4));color:#c4a35a}
-.dlg-yunxiao .dlg-bubble{background:rgba(196,163,90,0.1);border:1px solid rgba(196,163,90,0.2);border-radius:4px 12px 12px 12px}
-
-/* 镇月的台词 */
-.dlg-zhenyue .dlg-avatar{background:linear-gradient(135deg,rgba(100,180,255,0.3),rgba(60,120,200,0.3));color:#7cb9e8}
-.dlg-zhenyue .dlg-bubble{background:rgba(100,180,255,0.08);border:1px solid rgba(100,180,255,0.15);border-radius:4px 12px 12px 12px}
-
-/* 用户的输入 */
-.user-msg{text-align:right;margin-top:4px}
-.user-msg .dlg-bubble{display:inline-block;background:linear-gradient(135deg,#c4a35a,#8b6914);color:#1a0f00;border-radius:12px 4px 12px 12px;padding:10px 14px;font-size:14px;line-height:1.7;font-weight:500}
+.msg{max-width:75%;display:flex;gap:10px;animation:fadeIn 0.3s ease}
+.msg.self{flex-direction:row-reverse;align-self:flex-end}
+.msg-avatar{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1)}
+.msg-body{display:flex;flex-direction:column;gap:4px}
+.msg.self .msg-body{align-items:flex-end}
+.msg-name{font-size:11px;color:rgba(255,255,255,0.45);padding:0 4px}
+.msg.self .msg-name{color:rgba(255,200,100,0.7)}
+.msg-bubble{padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.7;word-break:break-word;position:relative}
+.msg:not(.self) .msg-bubble{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.08);border-bottom-left-radius:4px}
+.msg.self .msg-bubble{background:linear-gradient(135deg,#c4a35a,#8b6914);color:#1a0f00;border-bottom-right-radius:4px}
 
 /* 系统消息 */
-.sys{text-align:center;font-size:12px;color:rgba(255,255,255,0.2);padding:6px 0;font-style:italic}
+.sys{text-align:center;font-size:12px;color:rgba(255,255,255,0.25);padding:6px 0;font-style:italic}
 
 /* 输入区 */
 .input-bar{position:relative;z-index:10;padding:12px 16px;background:rgba(10,10,18,0.9);backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,0.06)}
 .quick-btns{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 .quick-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;transition:all 0.2s}
 .quick-btn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25)}
+.quick-btn:active{transform:scale(0.97)}
 .input-row{display:flex;gap:8px;align-items:flex-end}
 .input-field{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 14px;color:#fff;font-size:14px;resize:none;max-height:100px;outline:none;transition:border-color 0.2s;font-family:inherit;line-height:1.5}
 .input-field:focus{border-color:rgba(255,200,100,0.4)}
 .input-field::placeholder{color:rgba(255,255,255,0.3)}
-.send-btn{background:linear-gradient(135deg,#c4a35a,#8b6914);border:none;border-radius:10px;padding:10px 18px;color:#1a0f00;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap}
-.send-btn:hover{opacity:0.9}
-.send-btn:disabled{opacity:0.4;cursor:not-allowed}
+.send-btn{background:linear-gradient(135deg,#c4a35a,#8b6914);border:none;border-radius:10px;padding:10px 18px;color:#1a0f00;font-weight:600;font-size:14px;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.send-btn:hover{opacity:0.9;transform:scale(1.02)}
+.send-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.send-btn:active:not(:disabled){transform:scale(0.98)}
 
-/* 加载 */
+/* 加载动画 */
 .loading{text-align:center;padding:8px;color:rgba(255,255,255,0.3);font-size:12px;display:none}
 .loading.show{display:block}
 .loading::after{content:'';display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,0.1);border-top-color:rgba(255,200,100,0.6);border-radius:50%;animation:spin 0.8s linear infinite;margin-left:6px;vertical-align:middle}
+
+/* 打字机效果 */
 .typing{color:rgba(255,255,255,0.4);font-size:13px;padding:4px 0;display:none}
 .typing.show{display:block}
 
+/* 角色头像颜色 */
+.avatar-yunxiao{background:linear-gradient(135deg,rgba(196,163,90,0.3),rgba(139,105,20,0.3));border-color:rgba(196,163,90,0.4)}
+.avatar-zhenyue{background:linear-gradient(135deg,rgba(100,180,255,0.2),rgba(60,120,200,0.2));border-color:rgba(100,180,255,0.4)}
+.avatar-scene{background:rgba(255,255,255,0.06);font-size:20px}
+
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-@media(max-width:600px){.dialogue-row{flex-direction:column}.chat{padding:14px 12px}.quick-btns{gap:6px}}
+@media(max-width:600px){.msg{max-width:88%}.header{padding:10px 14px}.chat{padding:14px 12px}.quick-btns{gap:6px}.quick-btn{padding:4px 10px;font-size:11px}}
 </style>
 </head>
 <body>
 
 <!-- 背景 -->
-<div class="bg" id="bg"></div>
+<div class="bg"><div class="bg-layer" id="bgLayer"></div><div class="bg-mist"></div></div>
 
 <!-- 顶部 -->
 <div class="header">
   <div class="status-dot" id="statusDot"></div>
-  <div class="header-title">九洲大陆</div>
-  <div class="header-sub" id="statusText">连接中…</div>
+  <div>
+    <div class="header-title">九洲大陆</div>
+    <div class="header-sub" id="statusText">连接中…</div>
+  </div>
 </div>
 
 <!-- 对话 -->
 <div class="chat" id="chat">
-  <div class="sys">命运的齿轮开始转动……</div>
+  <div class="sys" id="intro">茶摊边，命运的齿轮开始转动……</div>
 </div>
 
-<!-- 加载 -->
+<!-- 打字指示 -->
 <div class="typing" id="typing">云霄正在说话…</div>
 
 <!-- 输入 -->
@@ -117,27 +114,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 </div>
 
 <script>
+// API 请求通过本地代理转发
 const TUNNEL = 'https://treatments-fired-puts-starts.trycloudflare.com';
 const API = TUNNEL + '/chat';
 
 const SYSTEM = `【世界观】九洲大陆，修仙世界。
 【核心人物】
-- 云霄：算命先生，修士，百年前失去修为。玩世不恭，说话先绕圈子。
-- 镇月：云霄师妹，活泼直率，重情重义。
+- 云霄：原青云阁天才弟子，百年前浩劫失去修为，以算命为生。玩世不恭，说话先绕圈子再直击要害。
+- 镇月：云霄师妹，活泼直率，重情重义，说话直接。
+- 青玉剑灵：沉睡古剑中的器灵，沉默寡言。
 
-【输出格式 - 必须严格遵守】
-输出内容必须用以下格式组织，每个部分单独成段：
-【场景：描述当前环境、氛围、动作】（旁白描述）
-「云霄：...台词...」（角色台词）
-「镇月：...台词...」（角色台词）
-
-要求：
-- 每个回答 = 一段【场景】+ 多段「角色台词」
-- 场景描写要有画面感（光线、颜色、声音、动作）
-- 禁止内心独白，禁止推理过程
-- 禁止分段输出省略号——每段都要完整`;
-
-// ============ UI 组件 ============
+【输出规则 - 违反将导致内容不可用】
+- 每个回答 = 一整段连续文字（300字以上），中间不断句、不分段
+- 用完整的场景+动作+对话描写这一段剧情
+- 禁止把内容拆成多段——只能输出一整段！
+- 禁止内心独白，禁止推理过程`;
 
 const chatEl = document.getElementById('chat');
 const inputEl = document.getElementById('inputField');
@@ -147,84 +138,33 @@ const statusDot = document.getElementById('statusDot');
 const statusText = document.getElementById('statusText');
 
 // 生成背景星星
-(function(){
-  const bg = document.getElementById('bg');
-  for(let i=0;i<40;i++){
-    const s=document.createElement('div');
-    s.className='bg-star';
-    s.style.left=Math.random()*100+'%';
-    s.style.top=Math.random()*100+'%';
-    s.style.setProperty('--d',(2+Math.random()*4)+'s');
-    s.style.setProperty('--dl',Math.random()*4+'s');
-    bg.appendChild(s);
+(function initBg() {
+  const bg = document.querySelector('.bg');
+  for (let i = 0; i < 40; i++) {
+    const star = document.createElement('div');
+    star.className = 'bg-star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
+    star.style.setProperty('--delay', Math.random() * 4 + 's');
+    bg.appendChild(star);
   }
 })();
 
-// 历史
+// 历史消息
 let history = [];
 
-// 解析输出，渲染旁白+台词
-function renderNarrative(text) {
-  const block = document.createElement('div');
-  block.className = 'narrative-block';
-
-  // 提取【场景】部分
-  const sceneMatch = text.match(/【场景[：:]([\s\S]*?)(?=「|$)/);
-  if (sceneMatch) {
-    const nar = document.createElement('div');
-    nar.className = 'narration';
-    nar.textContent = sceneMatch[1].trim();
-    block.appendChild(nar);
-  }
-
-  // 提取所有「角色台词」
-  const dlgRegex = /「([^：:：]+)[：:：]([^」]+)」/g;
-  let match;
-  let hasDialogue = false;
-  const dialogueRow = document.createElement('div');
-  dialogueRow.className = 'dialogue-row';
-
-  while ((match = dlgRegex.exec(text)) !== null) {
-    hasDialogue = true;
-    const role = match[1].trim();
-    const line = match[2].trim();
-    const cls = role.includes('云霄') ? 'yunxiao' : role.includes('镇月') ? 'zhenyue' : 'yunxiao';
-    const emoji = role.includes('云霄') ? '霄' : role.includes('镇月') ? '镇' : '?';
-
-    const dlg = document.createElement('div');
-    dlg.className = `dialogue dlg-${cls}`;
-    dlg.innerHTML = `
-      <div class="dlg-meta">
-        <div class="dlg-avatar">${emoji}</div>
-        <div class="dlg-name">${role}</div>
-      </div>
-      <div class="dlg-bubble">${escapeHtml(line)}</div>`;
-    dialogueRow.appendChild(dlg);
-  }
-
-  if (hasDialogue) block.appendChild(dialogueRow);
-
-  // 如果没有格式化的内容，当作旁白显示
-  if (!sceneMatch && !hasDialogue) {
-    const nar = document.createElement('div');
-    nar.className = 'narration';
-    nar.textContent = text;
-    block.appendChild(nar);
-  }
-
-  chatEl.appendChild(block);
-  chatEl.scrollTop = chatEl.scrollHeight;
-}
-
-function addUserMsg(text) {
-  const block = document.createElement('div');
-  block.className = 'narrative-block';
-  const row = document.createElement('div');
-  row.className = 'dialogue-row';
-  row.style.justifyContent = 'flex-end';
-  row.innerHTML = `<div class="user-msg"><div class="dlg-bubble">${escapeHtml(text)}</div></div>`;
-  block.appendChild(row);
-  chatEl.appendChild(block);
+function addMsg(role, name, text, avatarClass) {
+  const div = document.createElement('div');
+  div.className = 'msg' + (role === 'user' ? ' self' : '');
+  const icon = role === 'scene' ? '🌫' : (role === 'assistant' && name === '云霄' ? '霄' : (role === 'assistant' ? '镇' : '你'));
+  div.innerHTML = `
+    <div class="msg-avatar ${avatarClass || ''}">${icon}</div>
+    <div class="msg-body">
+      <div class="msg-name">${name}</div>
+      <div class="msg-bubble">${escapeHtml(text)}</div>
+    </div>`;
+  chatEl.appendChild(div);
   chatEl.scrollTop = chatEl.scrollHeight;
 }
 
@@ -240,54 +180,66 @@ function escapeHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 }
 
-function setLoading(on) {
-  sendBtn.disabled = on;
-  inputEl.disabled = on;
-  typingEl.className = on ? 'typing show' : 'typing';
+function setLoading(loading) {
+  sendBtn.disabled = loading;
+  inputEl.disabled = loading;
+  typingEl.className = loading ? 'typing show' : 'typing';
 }
 
-// ============ API ============
+async function callGemini(prompt) {
+  const body = {
+    prompt: prompt,
+    system: SYSTEM,
+    maxTokens: 8000
+  };
 
-async function callAPI(prompt) {
-  const body = { prompt, system: SYSTEM, maxTokens: 8000 };
   const resp = await fetch(API, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
-  if (!resp.ok) throw new Error('网络错误: ' + resp.status);
+
   const data = await resp.json();
-  if (data.error) throw new Error(data.error.message || 'API错误');
+  if (!resp.ok || data.error) {
+    const msg = data.error?.message || `HTTP ${resp.status}`;
+    throw new Error('API错误: ' + msg);
+  }
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  if (!text) throw new Error('无内容返回');
+  console.log('[finishReason]', data.candidates?.[0]?.finishReason, '| 文字长度:', text.length);
   return text;
 }
-
-// ============ 发送 ============
 
 async function sendMessage() {
   const text = inputEl.value.trim();
   if (!text || sendBtn.disabled) return;
   inputEl.value = '';
-
+  
+  // 特殊指令
   if (text === '/newchat') {
     history = [];
-    chatEl.innerHTML = '<div class="sys">命运的齿轮重新转动……</div>';
-    addSys('—— 重新开始 ——');
+    chatEl.innerHTML = '<div class="sys">茶摊边，命运的齿轮重新转动……</div>';
+    addSys('对话已重置');
     return;
   }
-
-  addUserMsg(text);
+  
+  addMsg('user', '我', text);
   history.push({ role: 'user', text });
   setLoading(true);
-
+  
   try {
-    const prevText = history.length > 1 ? history[history.length - 2]?.text?.slice(-80) : '';
-    const prompt = `对话历史最后一段：${prevText}\n\n用户最新输入：${text}\n\n请继续故事，用【场景】+「角色台词」格式推进剧情。`;
-    const response = await callAPI(prompt);
-    renderNarrative(response);
+    const prompt = `继续这个故事。云霄上一次说："${history[history.length-1]?.text?.slice(-60) || '...'}"
+
+现在继续写云霄的下一段故事。要求：
+- 必须是300字以上的一整段连续文字
+- 中间不断句、不换行、不分段
+- 包括场景描写、角色动作、角色对话
+- 禁止内心独白，禁止推理过程`;
+    const response = await callGemini(prompt);
+    
+    addMsg('assistant', '云霄', response, 'avatar-yunxiao');
     history.push({ role: 'assistant', text: response });
     setLoading(false);
+    chatEl.scrollTop = chatEl.scrollHeight;
   } catch(e) {
     addSys('⚠ ' + e.message);
     setLoading(false);
@@ -299,18 +251,20 @@ async function sendQuick(text) {
   await sendMessage();
 }
 
-// ============ 初始化 ============
+// 初始化：云霄开场
 (async function init() {
   statusText.textContent = '连接正常';
+  statusDot.className = 'status-dot';
   setLoading(true);
   try {
-    const response = await callAPI('云霄在茶摊边开场，【场景】+「角色台词」格式，不少于300字。');
-    renderNarrative(response);
+    const prompt = `你扮演云霄（一位算命的修士），在茶摊边开场。写一整段300字以上的故事开场，不要分段。`;
+    const response = await callGemini(prompt);
+    addMsg('assistant', '云霄', response, 'avatar-yunxiao');
     history.push({ role: 'assistant', text: response });
     addSys('—— 第一章 · 茶摊相遇 ——');
   } catch(e) {
     addSys('⚠ 连接失败: ' + e.message);
-    statusDot.style.background = '#f87171';
+    statusDot.className = 'status-dot offline';
     statusText.textContent = '连接失败';
   }
   setLoading(false);
