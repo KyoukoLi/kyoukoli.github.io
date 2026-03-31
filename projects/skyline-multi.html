@@ -114,7 +114,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 </div>
 
 <script>
-const API_KEY = 'AIzaSyBi5vDqt6fP7ake0_xOH6LWLFP_EbLftbo';
+const API_KEY = 'AIzaSyBGx_4aDfpg6CN3dPlax3CtXwpznCuUP8o';
 const MODEL = 'gemini-2.5-flash';
 const API = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
@@ -188,20 +188,28 @@ function setLoading(loading) {
 }
 
 async function callGemini(prompt) {
-  const messages = history.map(h => ({ role: h.role, parts: [{ text: h.text }] }));
+  // 用 systemInstruction + 当前 prompt 作为单轮调用
+  // 历史通过 prompt 本身传递（上面 callGemini 的调用方已经拼接好了）
   const body = {
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    systemInstruction: { parts: [{ text: SYSTEM }] },
+    systemInstruction: { role: 'system', parts: [{ text: SYSTEM }] },
     generationConfig: { maxOutputTokens: 800, temperature: 0.85, topP: 0.9 }
   };
+
   const resp = await fetch(API, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   });
-  if (!resp.ok) throw new Error('API错误: ' + resp.status);
+
   const data = await resp.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!resp.ok || data.error) {
+    const msg = data.error?.message || `HTTP ${resp.status}`;
+    throw new Error('API错误: ' + msg);
+  }
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  console.log('[finishReason]', data.candidates?.[0]?.finishReason, '| 文字长度:', text.length);
+  return text;
 }
 
 async function sendMessage() {
