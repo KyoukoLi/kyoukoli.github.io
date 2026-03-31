@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>直播虚拟宠物 MVP — UI/UX 设计方案</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 30px 20px; line-height: 1.9; color: #1f2328; background: #fff; font-size: 15px; }
+h1 { font-size: 1.8em; color: #0969da; border-bottom: 2px solid #ddf4ff; padding-bottom: 12px; margin-top: 0; }
+h2 { font-size: 1.35em; color: #0550ae; border-bottom: 1px solid #d0d7de; padding-bottom: 6px; margin-top: 2em; }
+h3 { font-size: 1.1em; color: #0550ae; margin-top: 1.5em; }
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+p { margin: 0.7em 0; }
+ul, ol { padding-left: 1.5em; margin: 0.7em 0; }
+li { margin: 0.3em 0; }
+table.viz { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.92em; }
+table.viz th, table.viz td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; }
+table.viz th { background: #f6f8fa; font-weight: 600; }
+table.viz tr:nth-child(even) td { background: #fafbfc; }
+blockquote { margin: 1em 0; padding: 0.5em 1em; border-left: 4px solid #0969da; background: #f6f8fa; color: #57606a; }
+pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; font-size: 0.875em; line-height: 1.6; margin: 1em 0; }
+code { background: #f6f8fa; padding: 2px 5px; border-radius: 3px; font-size: 0.9em; }
+.back { margin-bottom: 1.5em; }
+.back a { color: #0550ae; font-size: 0.9em; }
+hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+
+/* Wireframe styles */
+.wf-container { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 12px; padding: 20px; margin: 1.5em 0; }
+.wf-title { font-weight: 600; color: #0550ae; margin-bottom: 12px; font-size: 0.95em; }
+.wf-label { font-size: 0.75em; color: #57606a; background: #fff; border: 1px solid #d0d7de; border-radius: 4px; padding: 2px 6px; display: inline-block; margin-bottom: 6px; }
+.wf-row { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.wf-card { background: #fff; border: 1px solid #d0d7de; border-radius: 8px; padding: 12px; flex: 1; min-width: 200px; }
+.wf-card.green { border-color: #2da44e; background: #dafbe1; }
+.wf-card.blue { border-color: #0969da; background: #ddf4ff; }
+.wf-card.yellow { border-color: #bf8700; background: #fff8c5; }
+.wf-card.pink { border-color: #bc4c00; background: #fff1e5; }
+
+/* Simulated UI */
+.sim-screen { background: #1a1a2e; border-radius: 12px; padding: 16px; color: #fff; font-size: 12px; position: relative; margin: 1em 0; }
+.sim-header { text-align: center; padding: 8px; border-bottom: 1px solid #333; margin-bottom: 12px; font-size: 11px; color: #aaa; }
+.sim-video { background: #222; border-radius: 8px; height: 120px; display: flex; align-items: center; justify-content: center; color: #555; font-size: 11px; margin-bottom: 12px; position: relative; overflow: hidden; }
+.sim-pet { width: 60px; height: 60px; background: #ffd93d; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; position: absolute; bottom: 10px; right: 10px; animation: bounce 2s infinite; box-shadow: 0 4px 12px rgba(255,217,61,0.4); }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.sim-egg { width: 40px; height: 50px; background: linear-gradient(135deg,#e0c3fc,#8ec5fc); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; position: absolute; bottom: 10px; right: 10px; animation: shake 1s infinite; }
+@keyframes shake { 0%,100%{transform:rotate(-3deg)} 50%{transform:rotate(3deg)} }
+.sim-barrage { position: absolute; font-size: 10px; color: #fff; animation: scroll 6s linear infinite; white-space: nowrap; }
+@keyframes scroll { 0%{transform:translateX(100%)} 100%{transform:translateX(-200px)} }
+.sim-rank { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border-radius: 8px; padding: 6px 8px; font-size: 10px; min-width: 100px; }
+.sim-rank-item { display: flex; justify-content: space-between; padding: 2px 0; }
+.sim-rank-num { color: #ffd93d; margin-right: 4px; }
+.sim-hunger { position: absolute; bottom: 10px; left: 8px; display: flex; flex-direction: column; gap: 3px; }
+.sim-hunger-bar { background: #333; border-radius: 4px; height: 6px; width: 60px; overflow: hidden; }
+.sim-hunger-fill { height: 100%; background: #4ade80; border-radius: 4px; transition: width 0.3s; }
+.sim-feed-hint { position: absolute; bottom: 70px; right: 8px; background: rgba(0,0,0,0.7); color: #ffd93d; padding: 4px 8px; border-radius: 8px; font-size: 9px; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.sim-toast { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(255,217,61,0.9); color: #333; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; animation: fadeUp 2s forwards; pointer-events: none; }
+@keyframes fadeUp { 0%{opacity:1;transform:translate(-50%,-50%)} 70%{opacity:1;transform:translate(-50%,-70%)} 100%{opacity:0;transform:translate(-50%,-100%)} }
+
+@media(max-width:600px) { body { padding: 15px 12px; font-size: 14px; } }
+</style>
+</head>
+<body>
+<div class="back"><a href="/">&#8592; 返回首页</a></div>
+<h1>直播虚拟宠物 MVP — UI/UX 设计方案</h1>
+
+<h2>一、设计原则</h2>
+<blockquote>
+<p>直播间 UI 有且只有一个核心原则：<strong>不抢主播的注意力</strong>。</p>
+<p>宠物是直播间氛围的"背景音"，不是主角。用户在欣赏主播的间隙，瞥一眼宠物觉得有趣，就够了。</p>
+</blockquote>
+<ul>
+<li><strong>轻量化</strong>：UI 占屏幕面积不超过 15%，不遮挡主播画面</li>
+<li><strong>即时反馈</strong>：用户发弹幕后 1 秒内有视觉反馈</li>
+<li><strong>存在感强但不过度</strong>：宠物有持续微动画（呼吸/摇晃），但静止时不占视觉焦点</li>
+<li><strong>颜色克制</strong>：主体颜色不超过 3 种，避免和主播画面撞色</li>
+</ul>
+
+<h2>二、核心界面区域</h2>
+
+<h3>2.1 宠物挂件（核心区域）</h3>
+<p>位置：直播间画面右下角，固定浮层。</p>
+
+<div class="wf-container">
+<div class="wf-title">宠物状态示意</div>
+<div class="sim-screen">
+  <div class="sim-header">直播间画面</div>
+  <div class="sim-video">
+    <div class="sim-barrage" style="top:10px;">加油加油！快出来吧！👆</div>
+    <div class="sim-barrage" style="top:30px;animation-delay:1s;">喂食喂食！</div>
+    <div class="sim-barrage" style="top:50px;animation-delay:2s;">摸摸头~</div>
+    <div class="sim-pet">🐾</div>
+    <div class="sim-hunger">
+      <span class="wf-label">饱食度</span>
+      <div class="sim-hunger-bar"><div class="sim-hunger-fill" style="width:75%"></div></div>
+    </div>
+    <div class="sim-feed-hint">发「喂食」继续升级 ↑</div>
+    <div class="sim-toast">🐾 Lv.3 ↑</div>
+  </div>
+  <div class="sim-rank">
+    <div style="color:#ffd93d;font-weight:600;margin-bottom:4px;font-size:11px;">🏆 房间排行</div>
+    <div class="sim-rank-item"><span class="sim-rank-num">1</span><span>糖糖糖</span><span>Lv.7</span></div>
+    <div class="sim-rank-item"><span class="sim-rank-num">2</span><span>叫我大神</span><span>Lv.5</span></div>
+    <div class="sim-rank-item"><span class="sim-rank-num">3</span><span>小可爱</span><span>Lv.4</span></div>
+  </div>
+</div>
+</div>
+
+<h3>2.2 宠物状态设计</h3>
+<table class="viz">
+<thead><tr><th>状态</th><th>视觉表现</th><th>触发条件</th></tr></thead>
+<tbody>
+<tr><td><strong>蛋</strong></td><td>淡紫色渐变椭圆，微微摇晃，有裂纹纹理</td><td>用户发「领养一个蛋」</td></tr>
+<tr><td><strong>孵化中</strong></td><td>蛋持续摇晃，裂纹增加，有闪光特效</td><td>领养后倒计时开始</td></tr>
+<tr><td><strong>活跃</strong></td><td>宠物持续微动画（呼吸起伏），偶尔眨眼/摇尾巴</td><td>孵化完成，饱食度 > 0</td></tr>
+<tr><td><strong>摆烂</strong></td><td>宠物躺平，灰色滤镜覆盖，表情沮丧</td><td>饱食度 = 0</td></tr>
+</tbody>
+</table>
+
+<h3>2.3 宠物动画层级</h3>
+<table class="viz">
+<thead><tr><th>层级</th><th>动画类型</th><th>触发频率</th><th>示例</th></tr></thead>
+<tbody>
+<tr><td>微动画</td><td>被动持续</td><td>始终运行</td><td>呼吸起伏（2s周期）、眨眼（每15s）</td></tr>
+<tr><td>互动动画</td><td>弹幕触发</td><td>每次喂食/动作词</td><td>吃东西、翻跟头、摇尾巴</td></tr>
+<tr><td>事件动画</td><td>里程碑触发</td><td>等级提升/进化时</td><td>升级金光、进化全屏特效</td></tr>
+</tbody>
+</table>
+
+<h2>三、关键交互设计</h2>
+
+<h3>3.1 领养蛋流程</h3>
+<div class="wf-row">
+<div class="wf-card green">
+<div class="wf-title">✅ 用户视角</div>
+<ol style="font-size:0.9em;">
+<li>发弹幕「领养一个蛋」</li>
+<li>屏幕右下角出现一颗摇晃的紫色蛋</li>
+<li>看到提示「快来帮我加速孵化吧~」</li>
+<li>继续发弹幕，看到倒计时减少</li>
+<li>倒计时归零，蛋裂开，宠物出现</li>
+</ol>
+</div>
+<div class="wf-card blue">
+<div class="wf-title">🔧 技术视角</div>
+<ol style="font-size:0.9em;">
+<li>弹幕解析 → 识别「领养」关键词</li>
+<li>Redis 创建 pet:{id}（state=egg）</li>
+<li>WebSocket 推送蛋 Lottie 动画</li>
+<li>监听所有弹幕 → 倒计时 -3s</li>
+<li>倒计时归零 → 推送孵化动画</li>
+</ol>
+</div>
+</div>
+
+<h3>3.2 喂食流程</h3>
+<div class="wf-row">
+<div class="wf-card green">
+<div class="wf-title">✅ 用户视角</div>
+<ol style="font-size:0.9em;">
+<li>发弹幕「喂食」</li>
+<li>宠物做出吃东西动画（0.5s）</li>
+<li>弹出金色「+10 XP」文字</li>
+<li>若升级，弹出「Lv.X ↑」并有金光特效</li>
+<li>饱食度条短暂高亮</li>
+</ol>
+</div>
+<div class="wf-card yellow">
+<div class="wf-title">⚠️ 边界情况</div>
+<ol style="font-size:0.9em;">
+<li>饱食度已满 → 仍显示「吃撑了~」，无 XP</li>
+<li>宠物在蛋中 → 显示「还没孵化呢~」</li>
+<li>宠物已躺平 → 喂食后恢复，弹出「活过来了！」</li>
+</ol>
+</div>
+</div>
+
+<h3>3.3 排行榜设计</h3>
+<p>位置：宠物挂件右上角，始终可见，但默认折叠。</p>
+
+<div class="wf-container">
+<div class="wf-title">排行榜交互状态</div>
+<div class="wf-row">
+<div class="wf-card" style="min-width:120px;text-align:center;">
+<div style="font-size:28px;">🏆</div>
+<div style="font-size:0.85em;color:#57606a;">点击展开</div>
+<div style="font-size:11px;color:#aaa;margin-top:4px;">默认折叠</div>
+</div>
+<div class="wf-card" style="min-width:120px;text-align:center;">
+<div style="font-size:28px;">🐾</div>
+<div style="font-weight:600;">1. 糖糖糖</div>
+<div style="font-size:11px;color:#57606a;">Lv.7</div>
+</div>
+<div class="wf-card" style="min-width:120px;text-align:center;">
+<div style="font-size:28px;">🐾</div>
+<div style="font-weight:600;">2. 叫我大神</div>
+<div style="font-size:11px;color:#57606a;">Lv.5</div>
+</div>
+<div class="wf-card" style="min-width:120px;text-align:center;">
+<div style="font-size:28px;">🐾</div>
+<div style="font-weight:600;">3. 小可爱</div>
+<div style="font-size:11px;color:#57606a;">Lv.4</div>
+</div>
+</div>
+</div>
+
+<ul>
+<li><strong>默认折叠态</strong>：只显示 Trophy 图标 + Top 1 的头像和等级</li>
+<li><strong>展开态</strong>：显示 Top 10，带用户头像和昵称（脱敏：只显示昵称首字+***）</li>
+<li><strong>自己的宠物</strong>：始终高亮显示（无论排名），即使不在 Top 10</li>
+</ul>
+
+<h2>四、颜色系统</h2>
+<table class="viz">
+<thead><tr><th>用途</th><th>颜色</th><th>Hex</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>宠物主色</td><td>暖黄色</td><td>#FFD93D</td><td>活泼温暖，在深色背景上醒目</td></tr>
+<tr><td>蛋渐变</td><td>薰衣草→天蓝</td><td>#E0C3FC → #8EC5FC</td><td>柔和渐变，有神秘感</td></tr>
+<tr><td>XP 提示</td><td>金色</td><td>#FFB800</td><td>升级高亮，不可错过</td></tr>
+<tr><td>饱食度满</td><td>绿色</td><td>#4ADE80</td><td>状态良好</td></tr>
+<tr><td>饱食度低</td><td>红色</td><td>#F87171</td><td>需要喂食警告</td></tr>
+<tr><td>摆烂态</td><td>灰色</td><td>#9CA3AF</td><td>宠物无生气</td></tr>
+<tr><td>排行背景</td><td>深黑透明</td><td>rgba(0,0,0,0.6)</td><td>不遮挡主播画面</td></tr>
+</tbody>
+</table>
+
+<h2>五、动效规范</h2>
+<table class="viz">
+<thead><tr><th>动效</th><th>时长</th><th>Easing</th><th>触发场景</th></tr></thead>
+<tbody>
+<tr><td>宠物微呼吸</td><td>2s</td><td>ease-in-out</td><td>始终循环</td></tr>
+<tr><td>蛋摇晃</td><td>1s</td><td>ease-in-out</td><td>孵化中始终</td></tr>
+<tr><td>喂食反应</td><td>0.5s</td><td>弹簧动画</td><td>每次喂食</td></tr>
+<tr><td>XP 气泡上浮</td><td>1.5s</td><td>ease-out</td><td>每次获得 XP</td></tr>
+<tr><td>升级金光</td><td>2s</td><td>渐显</td><td>等级提升时</td></tr>
+<tr><td>复活动画</td><td>1s</td><td>弹簧</td><td>饱食度从0恢复</td></tr>
+<tr><td>排行榜展开</td><td>0.3s</td><td>ease-out</td><td>用户点击</td></tr>
+</tbody>
+</table>
+
+<h2>六、排版与字号</h2>
+<table class="viz">
+<thead><tr><th>元素</th><th>字号</th><th>字重</th><th>颜色</th></tr></thead>
+<tbody>
+<tr><td>宠物昵称</td><td>12px</td><td>600</td><td>#fff</td></tr>
+<tr><td>等级标签</td><td>10px</td><td>600</td><td>#FFD93D</td></tr>
+<tr><td>XP 气泡</td><td>11px</td><td>700</td><td>#FFB800</td></tr>
+<tr><td>排行榜昵称</td><td>10px</td><td>400</td><td>#fff</td></tr>
+<tr><td>提示文字</td><td>10px</td><td>400</td><td>#9CA3AF</td></tr>
+</tbody>
+</table>
+
+<h2>七、技术实现建议</h2>
+<ul>
+<li><strong>动画引擎</strong>：Lottie（JSON 驱动，设计师出图，程序加载）</li>
+<li><strong>宠物渲染</strong>：用 Spine 骨骼动画做交互动作，Lottie 做微动画</li>
+<li><strong>渲染容器</strong>：快手小窗（需审核）或 OBS 叠加层（临时方案）</li>
+<li><strong>排行榜更新</strong>：WebSocket 推送，渲染层每 5s 轮询兜底</li>
+<li><strong>断线重连</strong>：宠物状态从 Redis 恢复，不丢失数据</li>
+</ul>
+
+<h2>八、MVP 阶段 UI 优先级</h2>
+<table class="viz">
+<thead><tr><th>优先级</th><th>组件</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>P0</td><td>宠物挂件本体</td><td>蛋/宠物 Lottie + 位置固定</td></tr>
+<tr><td>P0</td><td>饱食度条</td><td>必须可见，用户知道自己宠物状态</td></tr>
+<tr><td>P0</td><td>喂食反馈</td><td>动画 + XP 气泡</td></tr>
+<tr><td>P0</td><td>等级显示</td><td>宠物头上显示 Lv.X</td></tr>
+<tr><td>P1</td><td>房间排行榜</td><td>折叠 + 展开</td></tr>
+<tr><td>P1</td><td>升级特效</td><td>金光动画</td></tr>
+<tr><td>P2</td><td>孵化倒计时</td><td>蛋上的数字进度</td></tr>
+<tr><td>P2</td><td>自己的宠物高亮</td><td>在排行榜中始终可见</td></tr>
+</tbody>
+</table>
+
+<hr>
+<p><em>UI/UX 方案由 AI 辅助设计 | 2026-03-31</em></p>
+</body>
+</html>

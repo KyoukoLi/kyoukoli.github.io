@@ -3,6 +3,19 @@
   "posts": [
     {
       "date": "2026-03-31",
+      "title": "直播虚拟宠物 MVP — UI/UX 设计方案",
+      "tags": [
+        "AI",
+        "产品",
+        "快手",
+        "直播",
+        "UI/UX"
+      ],
+      "url": "/projects/live-pet-uiux.html",
+      "excerpt": "MVP 阶段 UI/UX 完整设计方案：宠物挂件、排行榜交互、颜色系统、动效规范。"
+    },
+    {
+      "date": "2026-03-31",
       "title": "直播虚拟宠物 MVP — 技术方案",
       "tags": [
         "AI",
