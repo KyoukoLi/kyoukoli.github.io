@@ -3,6 +3,19 @@
   "posts": [
     {
       "date": "2026-03-31",
+      "title": "iDiana Pet — 产品构想 PRD",
+      "tags": [
+        "AI",
+        "产品",
+        "快手",
+        "直播",
+        "iDiana Pet"
+      ],
+      "url": "/projects/idiana-pet-prd.html",
+      "excerpt": "完整版产品构想文档：xpet模式×快手直播，像素宠物、房间排行、任务体系、主播双身份、OBS渲染层全覆盖。"
+    },
+    {
+      "date": "2026-03-31",
       "title": "直播虚拟宠物 MVP — UI/UX 设计方案",
       "tags": [
         "AI",

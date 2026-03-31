@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iDiana Pet — 产品构想 PRD</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 30px 20px; line-height: 1.9; color: #1f2328; background: #fff; font-size: 15px; }
+h1 { font-size: 1.8em; color: #0969da; border-bottom: 2px solid #ddf4ff; padding-bottom: 12px; margin-top: 0; }
+h2 { font-size: 1.35em; color: #0550ae; border-bottom: 1px solid #d0d7de; padding-bottom: 6px; margin-top: 2em; }
+h3 { font-size: 1.1em; color: #0550ae; margin-top: 1.5em; }
+h4 { font-size: 1em; color: #1f2328; margin-top: 1.2em; }
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+p { margin: 0.7em 0; }
+ul, ol { padding-left: 1.5em; margin: 0.7em 0; }
+li { margin: 0.3em 0; }
+table.viz { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.92em; }
+table.viz th, table.viz td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; }
+table.viz th { background: #f6f8fa; font-weight: 600; }
+table.viz tr:nth-child(even) td { background: #fafbfc; }
+blockquote { margin: 1em 0; padding: 0.5em 1em; border-left: 4px solid #0969da; background: #f6f8fa; color: #57606a; }
+pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; font-size: 0.875em; line-height: 1.6; margin: 1em 0; }
+code { background: #f6f8fa; padding: 2px 5px; border-radius: 3px; font-size: 0.9em; }
+.back { margin-bottom: 1.5em; }
+.back a { color: #0550ae; font-size: 0.9em; }
+hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+.tag { display: inline-block; background: #ddf4ff; color: #0550ae; padding: 2px 8px; border-radius: 12px; font-size: 0.8em; margin-right: 4px; }
+.tag.green { background: #dafbe1; color: #1a7f37; }
+.tag.yellow { background: #fff8c5; color: #9a6700; }
+.tag.pink { background: #fff1e5; color: #bc4c00; }
+.tag.red { background: #ffebe9; color: #cf222e; }
+.toc { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 8px; padding: 16px 20px; margin: 1.5em 0; }
+.toc ol { margin: 0; padding-left: 1.5em; }
+.toc li { margin: 0.2em 0; }
+.phase { background: #fff; border: 1px solid #d0d7de; border-radius: 8px; padding: 12px 16px; margin: 0.5em 0; }
+.phase.done { border-left: 3px solid #2da44e; }
+.phase.doing { border-left: 3px solid #0969da; }
+.phase.todo { border-left: 3px solid #bf8700; }
+@media(max-width:600px) { body { padding: 15px 12px; font-size: 14px; } }
+</style>
+</head>
+<body>
+<div class="back"><a href="/">&#8592; 返回首页</a></div>
+<h1>iDiana Pet — 产品构想 PRD</h1>
+<p><span class="tag">v2.0</span><span class="tag green">完整版</span><span class="tag">2026-03-31</span><span class="tag pink">iDiana Pet</span></p>
+
+<div class="toc">
+<strong>目录</strong>
+<ol>
+<li><a href="#s1">一、产品背景与目标</a></li>
+<li><a href="#s2">二、核心产品定位</a></li>
+<li><a href="#s3">三、宠物系统</a></li>
+<li><a href="#s4">四、互动机制</a></li>
+<li><a href="#s5">五、任务体系</a></li>
+<li><a href="#s6">六、主播角色设计</a></li>
+<li><a href="#s7">七、排行榜体系</a></li>
+<li><a href="#s8">八、UI/UX 设计</a></li>
+<li><a href="#s9">九、技术方案（MVP）</a></li>
+<li><a href="#s10">十、里程碑</a></li>
+<li><a href="#s11">十一、待确认问题</a></li>
+</ol>
+</div>
+
+<h2 id="s1">一、产品背景与目标</h2>
+
+<h3>1.1 背景</h3>
+<p>xpet 是 2023 年底在 Twitter 平台爆火的浏览器插件宠物养成游戏，核心特点：</p>
+<ul>
+<li><strong>寄生逻辑</strong>：宠物附着在用户的高频社交行为上</li>
+<li><strong>行动即养成</strong>：用户评论/互动 → 宠物获得经验 → 解锁宝箱</li>
+<li><strong>三要素</strong>：门槛极低 + 模式创新 + 社交平台流量红利</li>
+</ul>
+<p><strong>机会</strong>：把"QQ宠物"用 2026 年 AI 技术 + 像素风格，在快手直播间重新做一遍。</p>
+
+<h3>1.2 产品目标</h3>
+<table class="viz">
+<thead><tr><th>优先级</th><th>目标</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><span class="tag green">P0</span></td><td>提升互动率</td><td>核心指标：弹幕发送量、任务完成率</td></tr>
+<tr><td><span class="tag yellow">P1</span></td><td>提升留存</td><td>收藏体系 + 每日任务驱动回访</td></tr>
+<tr><td><span class="tag red">P2</span></td><td>间接变现</td><td>通过宠物互动带动礼物消费，暂不设计直接付费点</td></tr>
+</tbody>
+</table>
+
+<h3>1.3 设计原则</h3>
+<blockquote>
+<p>少即是多。MVP 不追求功能完整，追求核心体验闭环。</p>
+</blockquote>
+<ul>
+<li>不追求复杂的付费体系</li>
+<li>像素风拓麻歌子风格，有情怀感</li>
+<li>直播 UI 不抢主播注意力</li>
+<li>任务驱动跨房间活跃，为平台带来分发价值</li>
+</ul>
+
+<h2 id="s2">二、核心产品定位</h2>
+<p><strong>快手直播间社交宠物养成系统</strong></p>
+<ul>
+<li>每个用户拥有自己的宠物，跟人不跟房间</li>
+<li>可养多只，收藏柜模式，每次选一只"出战"进直播间</li>
+<li>像素风宠物实时投射到直播间画面</li>
+<li>核心目标：<strong>提升互动率</strong>，留存次要，暂不考虑直接变现</li>
+</ul>
+
+<h2 id="s3">三、宠物系统</h2>
+
+<h3>3.1 宠物生命周期</h3>
+<pre>领养蛋（弹幕指令） → 弹幕加速孵化 → Lv.1 幼崽 → 自动升级 → 成体 → 进化体 → 完全体 → 究极体
+（固定线性进化，无分支）</pre>
+
+<h3>3.2 养成维度</h3>
+<table class="viz">
+<thead><tr><th>维度</th><th>说明</th><th>驱动行为</th></tr></thead>
+<tbody>
+<tr><td><strong>等级</strong></td><td>核心成长线，决定排行</td><td>喂食/礼物/任务奖励 XP</td></tr>
+<tr><td><strong>外观</strong></td><td>等级解锁进化形态</td><td>等级里程碑</td></tr>
+<tr><td><strong>性格/技能</strong></td><td>影响动画表现风格</td><td>领养时随机分配</td></tr>
+<tr><td><strong>饱食度</strong></td><td>随时间下降，归零宠物"摆烂"</td><td>喂食恢复</td></tr>
+<tr><td><strong>房间好感度</strong></td><td>宠物对不同房间有独立好感度</td><td>在房间内互动累积</td></tr>
+</tbody>
+</table>
+
+<h3>3.3 宠物状态</h3>
+<table class="viz">
+<thead><tr><th>状态</th><th>视觉表现</th><th>触发条件</th></tr></thead>
+<tbody>
+<tr><td><strong>蛋</strong></td><td>薰衣草→天蓝渐变像素椭圆，微微摇晃</td><td>发「领养一个蛋」</td></tr>
+<tr><td><strong>孵化中</strong></td><td>蛋持续摇晃，裂纹增加</td><td>领养后倒计时开始</td></tr>
+<tr><td><strong>活跃</strong></td><td>宠物微动画（呼吸/眨眼/摇尾巴）</td><td>孵化完成，饱食度 > 0</td></tr>
+<tr><td><strong>摆烂</strong></td><td>宠物躺平，灰色滤镜，表情沮丧</td><td>饱食度 = 0</td></tr>
+</tbody>
+</table>
+
+<h3>3.4 像素风设计规范</h3>
+<ul>
+<li><strong>分辨率</strong>：基础帧 32×32，进化形态可达 64×64</li>
+<li><strong>风格</strong>：拓麻歌子彩色版 + QQ 宠物圆润感，饱和度高、圆润可爱</li>
+<li><strong>动画帧数</strong>：每个动作 2-4 帧，够用即可
+  <ul>
+    <li>待机（呼吸）：2帧循环</li>
+    <li>吃东西：3帧</li>
+    <li>躺平：2帧</li>
+    <li>升级特效：4帧闪光</li>
+  </ul>
+</li>
+<li><strong>工具建议</strong>：MVP 阶段用 Piskel（免费在线）手绘基础帧；正式版找像素画师外包</li>
+</ul>
+
+<h3>3.5 收藏柜</h3>
+<p>用户可同时养多只宠物，每次选一只"出战"进入当前直播间。不出战的宠物存放在收藏柜，状态冻结。</p>
+
+<h2 id="s4">四、互动机制</h2>
+
+<h3>4.1 弹幕互动词（第一期）</h3>
+<table class="viz">
+<thead><tr><th>弹幕</th><th>宠物响应</th><th>奖励</th></tr></thead>
+<tbody>
+<tr><td><code>领养一个蛋</code></td><td>获得宠物蛋，倒计时开始</td><td>—</td></tr>
+<tr><td>加速词（加油/快出来/加油）</td><td>孵化倒计时 -3 秒（单用户每3秒最多触发1次）</td><td>—</td></tr>
+<tr><td><code>喂食</code></td><td>宠物吃东西动画</td><td>+10 XP + 饱食度恢复</td></tr>
+<tr><td>预设动作词（摸摸头/坐下/跳舞）</td><td>宠物执行对应像素动作</td><td>—</td></tr>
+<tr><td><code>召唤宠物</code></td><td>宠物弹出气泡对话（可扩展为 AI 对话）</td><td>—</td></tr>
+</tbody>
+</table>
+<p>注：第一期不引入 AI 对话，先跑通核心养成循环。</p>
+
+<h3>4.2 礼物触发</h3>
+<p>刷礼物给主播时，用户的宠物同步获得经验奖励。</p>
+<table class="viz">
+<thead><tr><th>礼物价值</th><th>宠物 XP 奖励</th><th>备注</th></tr></thead>
+<tbody>
+<tr><td>1 元以下</td><td>+礼物价值 × 5 XP</td><td>基础互动</td></tr>
+<tr><td>1-10 元</td><td>+礼物价值 × 8 XP</td><td>中等打赏</td></tr>
+<tr><td>10 元以上</td><td>+礼物价值 × 10 XP</td><td>大额礼物</td></tr>
+</tbody>
+</table>
+
+<h3>4.3 经验值公式</h3>
+<pre>每次喂食：+10 XP（基础）
+每次礼物：+礼物价值 × 加成系数
+升级所需：level × 100 XP（即 Lv.1→Lv.2 = 100 XP，Lv.2→Lv.3 = 200 XP）</pre>
+
+<h2 id="s5">五、任务体系</h2>
+
+<h3>5.1 任务结构（三层）</h3>
+<table class="viz">
+<thead><tr><th>层级</th><th>触发场景</th><th>刷新频率</th><th>奖励类型</th></tr></thead>
+<tbody>
+<tr><td><strong>日常任务</strong></td><td>进房/发弹幕/宠物饥饿时</td><td>每日重置</td><td>XP / 孵化加速</td></tr>
+<tr><td><strong>成就任务</strong></td><td>达到特定条件时解锁</td><td>一次性</td><td>稀有宠物蛋 / 外观解锁</td></tr>
+<tr><td><strong>活动任务</strong></td><td>节日 / PK / 平台推广</td><td>限时</td><td>限定外观 / 特殊称号</td></tr>
+</tbody>
+</table>
+
+<h3>5.2 日常任务（第一期）</h3>
+<table class="viz">
+<thead><tr><th>任务</th><th>触发场景</th><th>奖励</th><th>目的</th></tr></thead>
+<tbody>
+<tr><td>在这个房间发 3 条弹幕</td><td>进房时派发</td><td>+30 XP</td><td>降低跨房间活跃门槛</td></tr>
+<tr><td>给主播点个赞</td><td>进房时派发</td><td>+15 XP</td><td>引导轻互动</td></tr>
+<tr><td>喂一次宠物</td><td>宠物饱食度 &lt; 50%</td><td>+10 XP + 饱食恢复</td><td>引导养成习惯</td></tr>
+<tr><td>再去 1 个新房间看看</td><td>完成 2 个房间任务后</td><td>碎片 x1</td><td>驱动跨房间流量分发</td></tr>
+<tr><td>刷礼物支持主播</td><td>检测到用户有打赏能力</td><td>+50 XP</td><td>引导付费转化</td></tr>
+</tbody>
+</table>
+
+<h3>5.3 碎片收集体系</h3>
+<p>集齐 5 个碎片可兑换一个<strong>稀有宠物蛋</strong>（稀有宠物无法通过普通蛋孵化获得）。</p>
+<p>碎片驱动用户坚持每天做任务。</p>
+
+<h3>5.4 任务展示位置</h3>
+<table class="viz">
+<thead><tr><th>展示位置</th><th>形式</th><th>优先级</th></tr></thead>
+<tbody>
+<tr><td>宠物头上气泡</td><td>轻提示（推送）</td><td><span class="tag green">P0</span></td></tr>
+<tr><td>宠物详情面板</td><td>侧边栏（点击展开）</td><td><span class="tag green">P0</span></td></tr>
+<tr><td>直播间消息流</td><td>系统消息卡片飘过</td><td><span class="tag yellow">P1</span></td></tr>
+<tr><td>快手 APP 消息中心</td><td>推送召回</td><td><span class="tag pink">P2</span></td></tr>
+</tbody>
+</table>
+
+<h2 id="s6">六、主播角色设计</h2>
+<p>主播同时拥有"房主"和"观众"双重身份，设计原则：<strong>运营权与竞争力分离</strong>。</p>
+
+<h3>6.1 房主专属能力（运营权）</h3>
+<table class="viz">
+<thead><tr><th>能力</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>开播buff</td><td>直播间宠物获得经验加成（递减衰减）</td></tr>
+<tr><td>宠物管理权</td><td>设置房间主题（影响宠物行为风格）</td></tr>
+<tr><td>排行曝光权</td><td>指定某只宠物上"房间亮点"展示</td></tr>
+<tr><td>PK发起权</td><td>只有主播能发起房间 vs 房间的宠物 PK</td></tr>
+</tbody>
+</table>
+
+<h3>6.2 主播竞争优势（观众身份）</h3>
+<ul>
+<li>主播宠物在自己房间<strong>不参与本房间排行</strong></li>
+<li>主播去其他房间看播时，宠物参与该房间排行</li>
+<li>神豪和主播在同一房间时，赛道不重叠，避免直接对抗</li>
+</ul>
+
+<h3>6.3 开播buff衰减机制</h3>
+<table class="viz">
+<thead><tr><th>时间段</th><th>经验加成</th></tr></thead>
+<tbody>
+<tr><td>开播前 5 分钟</td><td>+50%</td></tr>
+<tr><td>开播 5-30 分钟</td><td>+20%</td></tr>
+<tr><td>开播 30 分钟以上</td><td>+10%</td></tr>
+<tr><td>停播后</td><td>buff 消失，下次开播重新激活</td></tr>
+</tbody>
+</table>
+<p>效果：主播宠物开场有气势，中场有悬念，长尾内容里神豪也有舞台。</p>
+
+<h2 id="s7">七、排行榜体系</h2>
+<ul>
+<li><strong>范围</strong>：房间内排行（初期不做跨房间排行）</li>
+<li><strong>宠物归属</strong>：一人一宠，跟人不跟房间</li>
+<li><strong>收藏柜</strong>：可养多只，不出战的宠物冻结存储</li>
+<li><strong>排行展示</strong>：默认折叠（只显示 Top 1），展开显示 Top 10，自己的宠物始终高亮</li>
+</ul>
+
+<h2 id="s8">八、UI/UX 设计</h2>
+
+<h3>8.1 视觉风格</h3>
+<p><strong>像素风拓麻歌子风格</strong>：经典 32×32 像素精灵，饱和度高、圆润可爱。</p>
+
+<h3>8.2 宠物挂件布局</h3>
+<pre>直播间画面
+├── 右下角：宠物挂件（固定浮层）
+│   ├── 宠物本体（Lottie 像素动画）
+│   ├── 等级标签（Lv.X）
+│   ├── 饱食度条
+│   ├── 任务气泡（点击展开）
+│   └── 排行榜折叠入口（默认显示 Top1）
+└── 消息流：XP 气泡上浮、任务完成提示</pre>
+
+<h3>8.3 颜色系统</h3>
+<table class="viz">
+<thead><tr><th>用途</th><th>颜色</th><th>Hex</th></tr></thead>
+<tbody>
+<tr><td>宠物主色</td><td>暖黄色</td><td>#FFD93D</td></tr>
+<tr><td>蛋渐变</td><td>薰衣草→天蓝</td><td>#E0C3FC → #8EC5FC</td></tr>
+<tr><td>XP 提示</td><td>金色</td><td>#FFB800</td></tr>
+<tr><td>饱食度满</td><td>绿色</td><td>#4ADE80</td></tr>
+<tr><td>饱食度低</td><td>红色</td><td>#F87171</td></tr>
+<tr><td>摆烂态</td><td>灰色</td><td>#9CA3AF</td></tr>
+<tr><td>排行背景</td><td>深黑透明</td><td>rgba(0,0,0,0.6)</td></tr>
+</tbody>
+</table>
+
+<h3>8.4 MVP 阶段 UI 优先级</h3>
+<table class="viz">
+<thead><tr><th>优先级</th><th>组件</th></tr></thead>
+<tbody>
+<tr><td><span class="tag green">P0</span></td><td>宠物挂件本体（Lottie 动画）</td></tr>
+<tr><td><span class="tag green">P0</span></td><td>饱食度条</td></tr>
+<tr><td><span class="tag green">P0</span></td><td>喂食反馈（动画 + XP 气泡）</td></tr>
+<tr><td><span class="tag green">P0</span></td><td>等级显示（Lv.X 标签）</td></tr>
+<tr><td><span class="tag green">P0</span></td><td>任务气泡 + 任务面板</td></tr>
+<tr><td><span class="tag yellow">P1</span></td><td>房间排行榜（折叠 + 展开）</td></tr>
+<tr><td><span class="tag yellow">P1</span></td><td>升级金光特效</td></tr>
+<tr><td><span class="tag pink">P2</span></td><td>孵化倒计时（蛋上显示数字）</td></tr>
+</tbody>
+</table>
+
+<h2 id="s9">九、技术方案（MVP）</h2>
+
+<h3>9.1 部署策略</h3>
+<p><strong>MVP 阶段用 OBS 叠加层代替快手小窗</strong>：快手小窗接入需要审核周期，OBS 方案 1 周内可跑通真实直播。</p>
+
+<h3>9.2 系统架构</h3>
+<pre>┌──────────────────────────────────────┐
+│        快手开放平台（事件订阅）          │
+│  弹幕 WebSocket / 礼物回调 / 开播事件   │
+└──────────────┬───────────────────────┘
+               │
+┌──────────────▼───────────────────────┐
+│           Pet Engine（宠物引擎）         │
+│  弹幕解析 & 命令执行                     │
+│  经验计算 & buff 处理                   │
+│  任务派发 & 完成检测                    │
+│  状态机管理（egg/hatching/active）     │
+└──────────────┬───────────────────────┘
+               │
+┌──────────────▼───────────────────────┐
+│    Redis（宠物状态 + 房间排行 + 任务）    │
+│                                      │
+│  pet:{pet_id}   → Hash              │
+│  room:{room_id}:rank → SortedSet    │
+│  task:{user_id}:daily → Hash        │
+│  fragment:{user_id} → int           │
+└──────────────┬───────────────────────┘
+               │
+┌──────────────▼───────────────────────┐
+│       OBS 叠加层（渲染层）              │
+│  Lottie 动画（宠物）                   │
+│  排行浮层（Top 10）                   │
+│  XP 气泡 + 任务气泡                   │
+└──────────────────────────────────────┘</pre>
+
+<h3>9.3 数据模型</h3>
+<pre>Pet {
+  pet_id:    string   // 唯一标识
+  user_id:   string   // 所属用户
+  room_id:   string   // 当前所在房间
+  name:      string   // 宠物名
+  level:     int      // 当前等级（初始 1）
+  exp:       int      // 当前经验
+  hunger:    float    // 饱食度 0.0~1.0
+  state:     enum     // egg / hatching / active / sleeping
+  created_at:int      // 创建时间戳
+}
+
+DailyTask {
+  user_id:     string
+  date:        string   // YYYY-MM-DD
+  tasks:       Map&lt;task_id, {progress, completed}&gt;
+  fragments:   int      // 当日获得碎片数
+}</pre>
+
+<h3>9.4 推荐技术栈</h3>
+<table class="viz">
+<thead><tr><th>组件</th><th>推荐方案</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>宠物引擎</td><td>Go 服务（单节点）</td><td>轻量，高并发弹幕需上 Kafka</td></tr>
+<tr><td>状态存储</td><td>Redis Cloud</td><td>支持高 QPS</td></tr>
+<tr><td>动画渲染</td><td>OBS 叠加层（MVP）</td><td>快手小窗（正式版）</td></tr>
+<tr><td>LLM（后续）</td><td>MiniMax / 智谱 GLM</td><td>MVP 不需要</td></tr>
+</tbody>
+</table>
+
+<h2 id="s10">十、里程碑</h2>
+
+<table class="viz">
+<thead><tr><th>阶段</th><th>目标</th><th>验收标准</th></tr></thead>
+<tbody>
+<tr><td><strong>M1</strong></td><td>本地跑通领养→孵化→喂食→升级闭环</td><td>模拟弹幕事件，宠物从 Lv.1 到 Lv.3</td></tr>
+<tr><td><strong>M2</strong></td><td>接入快手测试环境 WebSocket</td><td>真实弹幕能触发宠物行为</td></tr>
+<tr><td><strong>M3</strong></td><td>渲染层接入（OBS 叠加）</td><td>像素动画和排行在直播中可见</td></tr>
+<tr><td><strong>M4</strong></td><td>灰度 1 个真实主播</td><td>直播 30 分钟，验证互动数据</td></tr>
+</tbody>
+</table>
+
+<h2 id="s11">十一、待确认问题</h2>
+<ul>
+<li>[ ] 快手开放平台弹幕 WebSocket 是否支持开发者订阅？</li>
+<li>[ ] 快手小窗/AR 挂件接入门槛和审核周期？</li>
+<li>[ ] 稀有宠物的具体获取方式？</li>
+<li>[ ] 主播 PK 玩法的详细规则？</li>
+<li>[ ] 像素画师资源确认（MVP 阶段先手绘，正式版外包）</li>
+</ul>
+
+<hr>
+<p><em>iDiana Pet 产品构想 PRD | 由 AI 辅助生成 | 2026-03-31</em></p>
+</body>
+</html>
