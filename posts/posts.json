@@ -2,6 +2,18 @@
   "version": 1,
   "posts": [
     {
+      "date": "2026-03-31",
+      "title": "直播虚拟宠物脑暴 — xpet × 快手",
+      "tags": [
+        "AI",
+        "产品",
+        "快手",
+        "直播"
+      ],
+      "url": "/projects/live-pet-brainstorm.html",
+      "excerpt": "基于 xpet 社交养成模式 × 快手直播间的产品构想脑暴文档，包含宠物系统、排行榜、主播角色设计。"
+    },
+    {
       "date": "2026-03-30",
       "title": "Skyline Demo — 故事驱动交互 PRD",
       "tags": [

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>直播虚拟宠物脑暴 — xpet × 快手</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; max-width: 860px; margin: 0 auto; padding: 30px 20px; line-height: 1.9; color: #1f2328; background: #fff; font-size: 15px; }
+h1 { font-size: 1.8em; color: #0969da; border-bottom: 2px solid #ddf4ff; padding-bottom: 12px; margin-top: 0; }
+h2 { font-size: 1.35em; color: #0550ae; border-bottom: 1px solid #d0d7de; padding-bottom: 6px; margin-top: 2em; }
+h3 { font-size: 1.1em; color: #0550ae; margin-top: 1.5em; }
+a { color: #0969da; text-decoration: none; }
+a:hover { text-decoration: underline; }
+p { margin: 0.7em 0; }
+ul, ol { padding-left: 1.5em; margin: 0.7em 0; }
+li { margin: 0.3em 0; }
+blockquote { margin: 1em 0; padding: 0.5em 1em; border-left: 4px solid #0969da; background: #f6f8fa; color: #57606a; }
+table.viz { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.92em; }
+table.viz th, table.viz td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; }
+table.viz th { background: #f6f8fa; font-weight: 600; }
+table.viz tr:nth-child(even) td { background: #fafbfc; }
+.back { margin-bottom: 1.5em; }
+.back a { color: #0550ae; font-size: 0.9em; }
+hr { border: none; border-top: 1px solid #d0d7de; margin: 2em 0; }
+@media(max-width:600px) { body { padding: 15px 12px; font-size: 14px; } }
+</style>
+</head>
+<body>
+<div class="back"><a href="/">&#8592; 返回首页</a></div>
+<h1>直播虚拟宠物脑暴 — xpet × 快手</h1>
+<p><strong>状态：脑暴完成，待评审 | 日期：2026-03-31</strong></p>
+
+<h2>一、背景</h2>
+<p>xpet 是 2023 年底在 Twitter 平台爆火的浏览器插件宠物养成游戏，核心特点：</p>
+<ul>
+<li><strong>寄生逻辑</strong>：宠物附着在用户的高频社交行为上</li>
+<li><strong>行动即养成</strong>：用户评论/互动 → 宠物获得经验 → 解锁宝箱</li>
+<li><strong>三要素</strong>：门槛极低 + 模式创新 + 社交平台流量红利</li>
+</ul>
+<p><strong>机会</strong>：把"QQ宠物"用 2026 年 AI 技术，在快手直播间重新做一遍。</p>
+
+<h2>二、核心产品定位</h2>
+<p><strong>直播间社交宠物养成系统</strong></p>
+<ul>
+<li>每个用户拥有自己的一只宠物，跟人不跟房间</li>
+<li>可养多只，但每次只能选一只"出战"进入直播间（收藏柜模式）</li>
+<li>宠物状态实时投射到直播间画面</li>
+<li>核心目标：<strong>提升互动率</strong>，留存次要，暂不考虑直接变现</li>
+</ul>
+
+<h2>三、核心交互机制</h2>
+
+<h3>3.1 宠物生命周期</h3>
+<pre>领养蛋（弹幕指令） → 弹幕加速孵化 → Lv.1 幼崽 → 自动升级 → 成体 → 进化体 → 完全体 → 究极体
+（固定线性进化，无分支）</pre>
+
+<h3>3.2 弹幕互动词（第一期）</h3>
+<table class="viz">
+<thead><tr><th>弹幕</th><th>宠物响应</th></tr></thead>
+<tbody>
+<tr><td><code>领养一个蛋</code></td><td>领取宠物蛋</td></tr>
+<tr><td>弹幕加速词（加油/快出来）</td><td>减少孵化倒计时</td></tr>
+<tr><td><code>喂食</code></td><td>宠物吃东西，恢复饱食度</td></tr>
+<tr><td>预设动作词（摸摸头/坐下/跳舞）</td><td>宠物执行对应动作</td></tr>
+</tbody>
+</table>
+<p>注：第一期不引入 AI 对话，不引入自然语言理解，先跑通核心循环。</p>
+
+<h3>3.3 养成维度</h3>
+<table class="viz">
+<thead><tr><th>维度</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><strong>等级</strong></td><td>核心成长线，喂食/礼物累积，决定排行</td></tr>
+<tr><td><strong>外观</strong></td><td>等级解锁进化形态，满足收集欲</td></tr>
+<tr><td><strong>性格/技能</strong></td><td>不同宠物性格不同，影响动画表现和对话风格</td></tr>
+<tr><td><strong>饱食度</strong></td><td>随时间下降，需喂食维护；归零宠物"摆烂"</td></tr>
+<tr><td><strong>房间好感度</strong></td><td>宠物对不同房间有独立好感度，影响互动积极性</td></tr>
+</tbody>
+</table>
+
+<h3>3.4 付费机制</h3>
+<p><strong>唯一付费出口</strong>：刷礼物给主播 → 宠物获得经验加速。无内购、无道具商城、无直接付费购买成长。</p>
+
+<h2>四、排行榜体系</h2>
+<ul>
+<li><strong>范围</strong>：房间内排行（初期不做跨房间排行）</li>
+<li><strong>宠物归属</strong>：一人一宠，跟人不跟房间</li>
+<li><strong>收藏柜</strong>：可养多只，不出战的宠物冻结存储</li>
+</ul>
+
+<h2>五、主播角色设计</h2>
+<p>主播同时拥有"房主"和"观众"双重身份，设计原则：<strong>运营权与竞争力分离</strong>。</p>
+
+<h3>5.1 房主专属能力（运营权）</h3>
+<table class="viz">
+<thead><tr><th>能力</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td>开播buff</td><td>直播间宠物获得经验加成（递减衰减）</td></tr>
+<tr><td>宠物管理权</td><td>设置房间主题（影响宠物行为风格）</td></tr>
+<tr><td>排行曝光权</td><td>指定某只宠物上"房间亮点"展示</td></tr>
+<tr><td>PK发起权</td><td>只有主播能发起房间 vs 房间的宠物 PK</td></tr>
+</tbody>
+</table>
+
+<h3>5.2 主播竞争优势（观众身份）</h3>
+<ul>
+<li>主播宠物在自己房间<strong>不参与本房间排行</strong></li>
+<li>主播去其他房间看播时，宠物参与该房间排行</li>
+<li>神豪和主播在同一房间时，赛道不重叠，避免直接对抗</li>
+</ul>
+
+<h3>5.3 开播buff衰减机制</h3>
+<table class="viz">
+<thead><tr><th>时间段</th><th>经验加成</th></tr></thead>
+<tbody>
+<tr><td>开播前 5 分钟</td><td>+50%</td></tr>
+<tr><td>开播 5-30 分钟</td><td>+20%</td></tr>
+<tr><td>开播 30 分钟以上</td><td>+10%</td></tr>
+<tr><td>停播后</td><td>buff 消失，下次开播重新激活</td></tr>
+</tbody>
+</table>
+<p>效果：主播宠物开场有气势，中场有悬念，长尾内容里神豪也有舞台。</p>
+
+<h2>六、稀有度体系（待细化）</h2>
+<ul>
+<li>稀有度暂定：不与战斗力挂钩，纯粹影响外观和身份感</li>
+<li>获取方式待定：特定房间/连续打卡/节日事件/PK胜利方</li>
+</ul>
+
+<h2>七、竞争分析</h2>
+<table class="viz">
+<thead><tr><th>竞品</th><th>现状</th><th>快手优势</th></tr></thead>
+<tbody>
+<tr><td>抖音虚拟主播</td><td>Vtuber 模式，需专业运营</td><td>门槛更低，普通主播可用</td></tr>
+<tr><td>斗鱼弹幕游戏</td><td>纯游戏化，缺乏情感连接</td><td>养成纵深 + 收藏体系</td></tr>
+<tr><td>B 站舰长体系</td><td>社交身份体系，无宠物</td><td>宠物提供情感投射</td></tr>
+</tbody>
+</table>
+
+<h2>八、技术可行性待确认</h2>
+<ul>
+<li>[ ] 弹幕 WebSocket 事件是否支持开发者自行订阅？</li>
+<li>[ ] 礼物回调是否支持实时推送？</li>
+<li>[ ] 进房事件是否有单独事件通道？</li>
+<li>[ ] 直播间挂件/小窗渲染层，快手支持哪种形式？</li>
+<li>[ ] 每个直播间是否可以挂载独立的开发者插件？</li>
+</ul>
+
+<h2>九、下一步行动</h2>
+<ul>
+<li>[ ] 技术可行性调研：对接快手开放平台</li>
+<li>[ ] MVP 定义：选定"弹幕领养 + 喂食 + 房间排行"做 Demo</li>
+<li>[ ] 找标杆主播灰度测试</li>
+<li>[ ] 输出正式 PRD</li>
+</ul>
+
+<hr>
+<p><em>本文档由 AI 辅助生成 | 2026-03-31</em></p>
+</body>
+</html>
