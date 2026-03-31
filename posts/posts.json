@@ -3,6 +3,18 @@
   "posts": [
     {
       "date": "2026-03-31",
+      "title": "九洲大陆 — 多角色叙事",
+      "tags": [
+        "AI",
+        "产品",
+        "叙事",
+        "多角色"
+      ],
+      "url": "/projects/skyline-multi.html",
+      "excerpt": "独立H5多角色叙事页面，接Gemini API，云霄×镇月双角色对话，视觉小说风格。"
+    },
+    {
+      "date": "2026-03-31",
       "title": "iDiana Pet — 产品构想 PRD",
       "tags": [
         "AI",
