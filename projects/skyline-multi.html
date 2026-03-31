@@ -191,7 +191,7 @@ async function callGemini(prompt) {
   const body = {
     prompt: prompt,
     system: SYSTEM,
-    maxTokens: 1000
+    maxTokens: 4000
   };
 
   const resp = await fetch(API, {
