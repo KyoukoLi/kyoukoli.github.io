@@ -2,6 +2,13 @@
   "version": 1,
   "posts": [
     {
+      "date": "2026-04-02",
+      "title": "私生模拟器 · PRD",
+      "tags": ["AI", "产品", "游戏", "叙事"],
+      "url": "/projects/private-fan-simulator/PRD.html",
+      "excerpt": "文字生存与资源管理游戏 PRD：追踪林屿森的四维属性系统、28个事件、三段式叙事引擎、结局体系。"
+    },
+    {
       "date": "2026-03-31",
       "title": "九洲大陆 — 多角色叙事",
       "tags": [
