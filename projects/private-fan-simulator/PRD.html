@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>私生模拟器 · PRD | idiana.wiki</title>
+<link rel="stylesheet" href="/lib/highlight.css">
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;line-height:1.8;color:#e0e0e0;background:#0a0a0a}
+h1,h2,h3,h4{color:#fff;margin-top:2em}
+h1{font-size:2em;border-bottom:2px solid #c0392b;padding-bottom:0.3em}
+h2{font-size:1.5em;border-bottom:1px solid #333;padding-bottom:0.2em}
+code{background:#1a1a1a;padding:2px 6px;border-radius:3px;font-size:0.9em;color:#f39c12}
+pre{background:#111;border:1px solid #333;padding:15px;border-radius:6px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin:1em 0}
+th,td{border:1px solid #333;padding:8px 12px;text-align:left}
+th{background:#1a1a1a;color:#f39c12}
+tr:nth-child(even){background:#111}
+li{margin:0.3em 0}
+hr{border:none;border-top:1px solid #333;margin:2em 0}
+a{color:#3498db;text-decoration:none}
+a:hover{text-decoration:underline}
+blockquote{border-left:3px solid #c0392b;margin:1em 0;padding:0.5em 1em;background:#111}
+.back-link{text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #333}
+.back-link a{display:inline-block;padding:10px 30px;background:#c0392b;color:#fff;text-decoration:none;border-radius:4px}
+.back-link a:hover{background:#a93226}
+</style>
+</head>
+<body>
+<p><h1>私生模拟器 · 产品需求文档 (PRD)</h1></p><p>&gt; 版本：v1.0 | 最后更新：2026-04-02 | 状态：<strong>MVP 开发中</strong></p><p><hr></p><p><h2>一、产品概述</h2></p><p><h3>1.1 产品定位</h3></p><p>一款极简的文字生存与资源管理模拟器（对标《鳌太模拟器》）。</p><p><strong>核心题材：</strong> 扮演极端狂热的"私生饭"，体验追踪偶像林屿森过程中的心理扭曲、窥探欲与道德拉扯。</p><p><strong>情感基调：</strong> 心理惊悚、压抑、高试错成本带来的焦虑感 + 黑色幽默讽刺。</p><p><strong>终极目标：</strong> 突破重重阻碍，拍到一张足以毁掉偶像职业生涯的绝密照片。</p><p><h3>1.2 平台与形式</h3></p><p><table>
+<tr><td>项目</td><td>说明</td></tr>
+<tr><td>------</td><td>------</td></tr>
+<tr><td>平台</td><td>H5 网页（响应式，移动端优先）</td></tr>
+<tr><td>部署地址</td><td>https://idiana.wiki/projects/private-fan-simulator/</td></tr>
+<tr><td>技术栈</td><td>原生 HTML5/CSS3/JS + LLM 增强叙事</td></tr>
+<tr><td>无需安装</td><td>直接浏览器打开即可游玩</td></tr>
+</table></p><p><h3>1.3 玩家背景</h3></p><p>玩家扮演一个<strong>中产家庭出身</strong>的年轻人，辞去实习工作，谎称在北京工作，实际上追踪林屿森。父母以为子女在工作，实际上副卡已经刷爆。</p><p><hr></p><p><h2>二、核心数值系统</h2></p><p><h3>2.1 四维属性</h3></p><p><table>
+<tr><td>属性</td><td>初始值</td><td>归零后果</td><td>设计意图</td></tr>
+<tr><td>------</td><td>--------</td><td>---------</td><td>---------</td></tr>
+<tr><td>体力 (Stamina)</td><td>100</td><td>猝死街头 Game Over</td><td>时间压力</td></tr>
+<tr><td>资金 (Money)</td><td>¥5000</td><td>弹尽粮绝 Game Over</td><td>核心约束</td></tr>
+<tr><td>隐蔽度 (Stealth)</td><td>100</td><td>社会性死亡 Game Over</td><td>风险暴露</td></tr>
+<tr><td>理智 (Sanity)</td><td>100</td><td>锒铛入狱 Game Over</td><td>心理防线</td></tr>
+</table></p><p><h3>2.2 追踪进度</h3></p><p><table>
+<tr><td>阶段</td><td>进度</td><td>氛围</td><td>机制</td></tr>
+<tr><td>------</td><td>------</td><td>------</td><td>------</td></tr>
+<tr><td>萌芽期</td><td>0-30%</td><td>紧张但可控</td><td>可撤回，理智压力小</td></tr>
+<tr><td>沉没期</td><td>30-70%</td><td>焦虑上升</td><td>沉没成本增大，难以回头</td></tr>
+<tr><td>深渊期</td><td>70-90%</td><td>压力极大</td><td>理智上限开始衰减</td></tr>
+<tr><td>终局</td><td>90-100%</td><td>极度紧张</td><td>获得绝密照片，做出终局选择</td></tr>
+</table></p><p><h3>2.3 每日结算</h3></p><p>每回合（一天）的基础消耗：</p><p>- 体力：-5
+- 资金：-¥50（基本食宿）
+- 理智：-3（精神压力）
+- 隐蔽度：±随机波动（-5 到 +5）</p><p><strong>租对面楼特殊状态：</strong> 日常消耗打 8 折，每日自动获得进度 +3。</p><p><hr></p><p><h2>三、事件体系</h2></p><p><h3>3.1 事件分类</h3></p><p><table>
+<tr><td>类型</td><td>数量</td><td>风险</td><td>频率</td><td>说明</td></tr>
+<tr><td>------</td><td>------</td><td>------</td><td>------</td><td>------</td></tr>
+<tr><td>核心事件</td><td>8个</td><td>高</td><td>条件触发</td><td>主线推进，进度达标时强制触发</td></tr>
+<tr><td>日常事件</td><td>5个</td><td>低</td><td>高频</td><td>节奏调节，降低重复感</td></tr>
+<tr><td>随机事件</td><td>15个</td><td>高</td><td>低频</td><td>制造戏剧张力，核心乐趣所在</td></tr>
+<tr><td><strong>合计</strong></td><td><strong>28个</strong></td><td>—</td><td>—</td><td>—</td></tr>
+</table></p><p><h3>3.2 核心事件（8个）</h3></p><p>1. <strong>卡机票</strong> — 登机口混入同航班 | 黄牛票/经济舱/放弃
+2. <strong>VIP通道走空</strong> — 苦等三小时走空 | 认栽/打探位置
+3. <strong>装车底定位器</strong> — 高危操作GPS安装 | 安装/先观察
+4. <strong>地库蹲守分身术</strong> — 两辆保姆车分头走 | 追/冷静分析
+5. <strong>近距离手机被删</strong> — 助理强制删照片 | 配合/反抗/求饶
+6. <strong>Staff格式化相机</strong> — 偷拍被抓 | 跪求/硬刚
+7. <strong>翻垃圾桶获门牌</strong> — 凌晨厨余垃圾 | 拼凑/放弃
+8. <strong>租对面楼的房子</strong> — 月租¥4500永久蹲守 | 租/再想想</p><p><h3>3.3 随机事件（15个）</h3></p><p><table>
+<tr><td>#</td><td>事件</td><td>核心冲突</td></tr>
+<tr><td>---</td><td>------</td><td>---------</td></tr>
+<tr><td>1</td><td>林屿森直视了你</td><td>对视一秒，认不出来的恐惧</td></tr>
+<tr><td>2</td><td>手机被砸</td><td>保镖打掉手机</td></tr>
+<tr><td>3</td><td>被其他私生排挤</td><td>登机口被孤立</td></tr>
+<tr><td>4</td><td>被狗仔拍到</td><td>狗仔老周盯上了你</td></tr>
+<tr><td>5</td><td>身份证暴露</td><td>安检时名片掉落</td></tr>
+<tr><td>6</td><td>假扮工作人员</td><td>假工作证混入</td></tr>
+<tr><td>7</td><td>住址被曝光</td><td>定位暴露小区名</td></tr>
+<tr><td>8</td><td>身份被顶替</td><td>另一个私生饭冒充你</td></tr>
+<tr><td>9</td><td>查到酒店房间号</td><td>1802，想上楼</td></tr>
+<tr><td>10</td><td>保姆车竞速</td><td>夜色里飙到180</td></tr>
+<tr><td>11</td><td>见面会闯入</td><td>后台入口只有一个保安</td></tr>
+<tr><td>12</td><td>父母来电话</td><td>第23天的谎言</td></tr>
+<tr><td>13</td><td>邻居发现了</td><td>对门阿姨的敲门</td></tr>
+<tr><td>14</td><td>跟踪视频被曝光</td><td>B站播放量破十万</td></tr>
+<tr><td>15</td><td>情报被对家截胡</td><td>情报源被反复出卖</td></tr>
+</table></p><p><hr></p><p><h2>四、叙事引擎</h2></p><p><h3>4.1 三段式叙事节奏</h3></p><p><strong>Phase 1 — RESULT（结果叙述）</strong>
+玩家做出选择后，生成 80-120 字的结果叙述。风格：冷峻、克制、有感官细节。结果简短有力，像钉子一样扎进去。</p><p><strong>Phase 2 — BUILDUP（事件铺垫）</strong>
+自动生成 100-150 字的叙事铺垫。描写玩家当前处境（时间、地点、氛围、心理状态）。末尾要有悬念钩子，节奏慢下来。</p><p><strong>Phase 3 — OPTIONS（选项呈现）</strong>
+铺垫后呈现 2-3 个选项。每个选项要有明确的性格倾向（冒险/保守/极端），让玩家感受到每个选择代表不同的人生路径。</p><p><h3>4.2 叙事风格</h3></p><p>- 第一人称视角
+- 冷峻、压抑、黑色幽默
+- 注重感官细节：声音、气味、温度、触感
+- 结果叙述：短促有力
+- 铺垫叙述：制造悬念
+- 禁止：暴力/色情描写</p><p><h3>4.3 LLM Prompt 设计要点</h3></p><p>系统 Prompt 包含：
+- 当前四维属性数值
+- 追踪进度和天数
+- 偶像信息（林屿森，顶流男演员）
+- 当前游戏阶段（萌芽/沉没/深渊/终局）
+- 三段式节奏说明
+- 氛围参考表
+- 严格 JSON 输出格式</p><p><hr></p><p><h2>五、结局系统</h2></p><p><h3>5.1 坏结局（Game Over，5个）</h3></p><p><table>
+<tr><td>结局</td><td>触发条件</td><td>核心信息</td></tr>
+<tr><td>------</td><td>---------</td><td>---------</td></tr>
+<tr><td>弹尽粮绝</td><td>资金 ≤ 0</td><td>副卡刷爆，快捷酒店三天没吃饭</td></tr>
+<tr><td>猝死街头</td><td>体力 ≤ 0</td><td>倒在机场到达大厅</td></tr>
+<tr><td>社会性死亡</td><td>隐蔽度 ≤ 0</td><td>热搜第一，#私生饭跟踪林屿森#</td></tr>
+<tr><td>锒铛入狱</td><td>理智 ≤ 0</td><td>水果刀，精神鉴定，边缘型人格</td></tr>
+<tr><td>偶像退圈</td><td>90天进度&lt;50%</td><td>九十个日夜，全部归零</td></tr>
+</table></p><p><h3>5.2 中结局（3个）</h3></p><p><table>
+<tr><td>结局</td><td>触发条件</td><td>核心信息</td></tr>
+<tr><td>------</td><td>---------</td><td>---------</td></tr>
+<tr><td>律师函警告</td><td>进度≥60%且隐蔽≤20%</td><td>工作室律师函，永远进黑名单</td></tr>
+<tr><td>职业代拍</td><td>进度≥50%且资金≤1000</td><td>从私生饭到职业代拍</td></tr>
+<tr><td>及时止损</td><td>进度≥30%且理智≥50%且资源耗尽</td><td>回程火车上哭了很久</td></tr>
+</table></p><p><h3>5.3 好结局（1个）</h3></p><p><table>
+<tr><td>结局</td><td>触发条件</td><td>核心信息</td></tr>
+<tr><td>------</td><td>---------</td><td>---------</td></tr>
+<tr><td>神之私信</td><td>进度≥80%且理智≥60%且隐蔽≥40%</td><td>偶像私信："请你放过自己"</td></tr>
+</table></p><p><h3>5.4 终局分支（进度100%时）</h3></p><p>玩家获得绝密照片后，三选一：</p><p><table>
+<tr><td>选项</td><td>结局名</td><td>效果</td></tr>
+<tr><td>------</td><td>--------</td><td>------</td></tr>
+<tr><td>曝光</td><td>玉石俱焚</td><td>偶像退圈，你也面临法律制裁</td></tr>
+<tr><td>变现</td><td>非法变现</td><td>卖照片赚60万，回家，但失去了相信的勇气</td></tr>
+<tr><td>保留</td><td>神之视角</td><td>深渊模式：守着秘密的幽灵，理智上限持续衰减</td></tr>
+</table></p><p><h3>5.5 深渊模式（神之视角后续）</h3></p><p>进入条件：终局选择"保留"</p><p>- 每日理智上限 -2
+- 解锁特殊场景：被害妄想、秘密泄露
+- 特殊结局：电脑被黑，秘密全网曝光</p><p><hr></p><p><h2>六、技术架构</h2></p><p><h3>6.1 系统架构</h3></p><p><pre><code>前端 (H5)
+  ↓ JSON 交互
+LLM API (api.js) ←→ 本地引擎 (game.js)
+  ↓                  ↓
+OpenClaw/云LLM     事件库/结局库/偶像池
+</code></pre></p><p><h3>6.2 部署方案</h3></p><p>- <strong>CSP 问题：</strong> GitHub Pages CSP <code>default-src 'none'</code> 阻止外部 JS
+- <strong>解决方案：</strong> 所有代码内联到一个 HTML 文件（约90KB）
+- <strong>构建脚本：</strong> <code>scripts/bundle-sasaeng.py</code>（Python）
+- <strong>部署流程：</strong> 构建 → commit → push → CDN 传播（~2分钟）</p><p><h3>6.3 数据文件</h3></p><p><table>
+<tr><td>文件</td><td>内容</td></tr>
+<tr><td>------</td><td>------</td></tr>
+<tr><td><code>data/celebrities.js</code></td><td>偶像配置（林屿森，单偶像）</td></tr>
+<tr><td><code>data/events.js</code></td><td>事件库（28个事件定义）</td></tr>
+<tr><td><code>data/endings.json</code></td><td>结局库（5坏3中1好+3终局+深渊）</td></tr>
+<tr><td><code>data/config.js</code></td><td>游戏参数配置（初始值/消耗/阈值）</td></tr>
+<tr><td><code>prompts/game-agent.md</code></td><td>LLM Agent Prompt 模板</td></tr>
+<tr><td><code>js/game.js</code></td><td>本地游戏引擎（状态机/事件选择/结算）</td></tr>
+<tr><td><code>js/api.js</code></td><td>LLM API 集成（三段式叙事/降级策略）</td></tr>
+<tr><td><code>css/style.css</code></td><td>暗色调 UI（心理惊悚风格）</td></tr>
+</table></p><p><h3>6.4 API 降级策略</h3></p><p><pre><code>尝试调用 LLM API
+    ↓ 失败
+生成 Result 叙述（本地模板）
+    ↓
+生成 Buildup 叙述（本地事件描述）
+    ↓
+渲染选项（本地事件选项）
+</code></pre></p><p><hr></p><p><h2>七、当前状态</h2></p><p><h3>7.1 已完成</h3></p><p>- [x] 产品定位与概念设计
+- [x] 四维属性系统
+- [x] 每日结算机制
+- [x] 28个事件编写完成（叙事质量待优化）
+- [x] 结局系统（5坏3中1好+终局）
+- [x] 偶像配置（林屿森）
+- [x] 三段式叙事引擎设计
+- [x] 本地引擎回退保障
+- [x] H5 响应式界面
+- [x] GitHub Pages 部署（90KB 单文件）</p><p><h3>7.2 待完成</h3></p><p>- [ ] 叙事质量调优（LLM Prompt 迭代）
+- [ ] 数值平衡校准（消耗速度/成功率）
+- [ ] 事件数量扩充（随机事件太少）
+- [ ] 深渊模式完整实现
+- [ ] 成就系统
+- [ ] 存档/读档功能
+- [ ] 剧情回顾日志</p><p><hr></p><p><h2>八、事件库文档</h2></p><p>事件库详细文档（含叙事原文）：<code>docs/事件库.md</code></p><p><hr></p><p><em>文档版本：v1.0 | 2026-04-02</em>
+</p>
+<div class="back-link">
+<a href="/projects/private-fan-simulator/">← 回到游戏</a>
+</div>
+</body>
+</html>
