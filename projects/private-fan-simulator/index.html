@@ -262,6 +262,71 @@ body::before {
   letter-spacing: 1px;
 }
 
+/* 结果叙述面板（Phase 1） */
+.result-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--accent-orange);
+  border-radius: var(--radius);
+  padding: 25px;
+  margin-bottom: 20px;
+  min-height: 180px;
+  position: relative;
+  display: none;
+  animation: slideIn 0.4s ease;
+}
+
+.result-label {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 10px;
+  color: var(--accent-orange);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  background: rgba(211, 84, 0, 0.1);
+  border: 1px solid rgba(211, 84, 0, 0.3);
+  border-radius: var(--radius);
+}
+
+.result-text {
+  font-size: 15px;
+  line-height: 1.9;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  font-style: italic;
+}
+
+.result-text::first-letter {
+  font-size: 1.5em;
+  font-weight: 500;
+  float: left;
+  margin-right: 8px;
+  line-height: 1;
+  color: var(--accent-orange);
+}
+
+.continue-btn {
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid var(--accent-orange);
+  color: var(--accent-orange);
+  font-size: 13px;
+  letter-spacing: 3px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  font-family: var(--font-main);
+}
+
+.continue-btn:hover {
+  background: rgba(211, 84, 0, 0.1);
+  transform: translateX(3px);
+}
+
 /* 叙事区域 */
 .narrative-panel {
   background: var(--bg-card);
@@ -1143,282 +1208,7 @@ window.EVENT_LIBRARY = {
 };
 
 </script>
-  <script>
-/**
- * 私生模拟器 - 结局库
- * 包含所有可能的结局及其触发条件
- * 主人公背景：中产家庭，追踪林屿森
- */
-
-window.ENDINGS = {
-
-  // =============================================
-  // 坏结局（Game Over 类）
-  // =============================================
-  
-  badEndings: [
-    {
-      id: 'bankrupt',
-      name: '弹尽粮绝',
-      trigger: 'money <= 0',
-      title: '游戏结束：弹尽粮绝',
-      narrative: `快捷酒店的墙壁泛黄，墙皮在脱落。
-
-你已经三天没有正经吃过饭了。父母的副卡早就刷爆了——你告诉他们那是实习房租。
-
-手机屏幕亮着。林屿森正在两千公里外的城市出席活动。
-
-你已经买不起下一程机票了。
-
-退群吧。`,
-      stats: { daysSurvived: 'dynamic', finalProgress: 'dynamic' },
-      afterword: '追踪第 {days} 天，你宣告破产。中产的体面，在你蹲守的第三十二天，彻底碎掉了。',
-      color: '#8B0000'
-    },
-    {
-      id: 'collapsed',
-      name: '猝死街头',
-      trigger: 'stamina <= 0',
-      title: '游戏结束：猝死街头',
-      narrative: `机场到达大厅，地砖冰凉。
-
-你倒在安检线外三十米的地方。周围有人在尖叫，有人在打电话。你的手机屏幕还亮着——林屿森刚发了微博：落地，一切顺利。
-
-但你再也追不动了。
-
-爸妈接到电话的时候，实习公司的HR正在追问你怎么突然消失了。`,
-      afterword: '连续追踪 {days} 天，你透支了生命的全部额度。病床边，父母签下了病危通知书。',
-      color: '#4A0000'
-    },
-    {
-      id: 'exposed',
-      name: '社会性死亡',
-      trigger: 'stealth <= 0',
-      title: '游戏结束：社会性死亡',
-      narrative: `热搜第一。
-
-#私生饭跟踪林屿森#
-评论区在欢呼。你的学校被扒了出来，你的照片被做成表情包，你的微博底下全是"恶心""变态""去死"。
-
-高中同学群里，有人发了你高一运动会的照片。
-
-"原来一直是这样的人啊。"
-
-你曾经追求的"和偶像最近的距离"，如今变成了和丑闻最近的距离。`,
-      afterword: '你的隐私被彻底曝光。这辈子，你都无法再正常生活——至少在互联网上。',
-      color: '#2F4F4F'
-    },
-    {
-      id: 'insane',
-      name: '锒铛入狱',
-      trigger: 'sanity <= 0',
-      title: '游戏结束：彻底疯魔',
-      narrative: `水果刀从手里滑落。
-
-"为什么……为什么你从来不正眼看我？"
-
-尖叫声引来了安保。等你清醒过来的时候，你已经在派出所了。
-
-三个月后，精神鉴定报告：边缘型人格障碍伴轻度躁狂。
-
-罪名是故意伤害未遂。`,
-      afterword: '理智归零的那一刻，你失去了作为正常人活着的最后资格。病床上，你还在问：他现在在哪里？',
-      color: '#1C1C1C'
-    },
-    {
-      id: 'idol_quit',
-      name: '偶像退圈了',
-      trigger: 'days_elapsed >= 90 && progress < 50',
-      title: '游戏结束：竹篮打水',
-      narrative: `热搜：林屿森宣布无限期退圈。
-
-你的手机掉在了地上。
-
-九十个日夜，十万块钱，无数次心跳加速——全部归零。官宣退圈的那天，他甚至没有提到任何关于私生饭的事。
-
-就像你从来没存在过一样。`,
-      afterword: '你追了一辈子的人，最终连让你追的机会都没给你。而你已经回不去了。',
-      color: '#4B0082'
-    }
-  ],
-
-  // =============================================
-  // 中结局（达成特定条件）
-  // =============================================
-  
-  neutralEndings: [
-    {
-      id: 'warning_received',
-      name: '律师函警告',
-      trigger: 'progress >= 60 && stealth <= 20',
-      title: '结局：律师函警告',
-      narrative: `一封来自林屿森工作室的律师函躺在你的邮箱里。
-
-"……跟踪、偷拍、散布行程信息，已严重侵犯林屿森先生隐私权。本律师函郑重函告……"
-
-你删掉了所有照片，清空了社交媒体账号。
-
-第二天，你的名字出现在粉圈黑名单里——永远。`,
-      afterword: '你及时踩了刹车，但代价是永远失去了接近他的资格。退圈的那天，你哭了很久。',
-      color: '#8B4513'
-    },
-    {
-      id: 'career_change',
-      name: '职业代拍',
-      trigger: 'progress >= 50 && money <= 1000',
-      title: '结局：职业代拍',
-      narrative: `卖照片赚了第一桶金后，你发现了一条"可持续发展"的路。
-
-从私生饭，到职业代拍。
-
-你开始向狗仔队、站姐、甚至对家粉丝出售林屿森的一手行程。你的报价比谁都低，你的消息比谁都快。
-
-你是这个阴暗世界里，最职业的那一个。`,
-      afterword: '你把病态的执着，变成了生意。你告诉自己这是谋生手段。但只有你自己知道，你从来没有真正放下过。',
-      color: '#DAA520'
-    },
-    {
-      id: 'quit_clean',
-      name: '正常退圈',
-      trigger: 'progress >= 30 && sanity >= 50 && (money <= 1000 || stamina <= 20)',
-      title: '结局：及时止损',
-      narrative: `你删掉了手机里的所有照片。
-
-在回程的火车上，你哭了很久。不是因为林屿森，而是因为那个追了三十多个日夜的自己。
-
-你把他的微博从特别关注移到普通关注，再从普通关注移到移除。
-
-三个月后，你偶然刷到他的新剧宣发——你甚至想不起来他长什么样了。`,
-      afterword: '你在坠入深渊之前，踩住了刹车。然后花了很长时间，才学会不再追踪任何人的行程。',
-      color: '#2E8B57'
-    }
-  ],
-
-  // =============================================
-  // 好结局（达成特定条件）
-  // =============================================
-  
-  goodEndings: [
-    {
-      id: 'idol_response',
-      name: '偶像私下联系',
-      trigger: 'progress >= 80 && sanity >= 60 && stealth >= 40',
-      title: '结局：神之私信',
-      narrative: `你的微博收到了一条私信。
-
-来自林屿森本人。
-
-"我知道你是谁。你跟了我很久。"
-
-你的手在发抖。
-
-"我不怪你。但请你放过自己，也放过我。好吗？"
-
-你哭了。然后，你终于，放下了。`,
-      afterword: '你追了一百天，最终收到的是一句"请你放过自己"。这反而成了最好的结局。',
-      color: '#4169E1'
-    }
-  ],
-
-  // =============================================
-  // 终局分支（达到100%进度后）
-  // =============================================
-  
-  finalEndings: [
-    {
-      id: 'destruction',
-      name: '玉石俱焚',
-      trigger: 'final_choice === "expose"',
-      title: '终局：玉石俱焚',
-      narrative: `照片发出去了。
-
-热搜爆炸。林屿森的工作室紧急公关，但照片已经在全网传开。
-
-两天后，他宣布退圈。
-
-你在出租屋里刷着微博，看着粉丝们哭成一片，心里涌起一股奇怪的满足感——然后是巨大的空虚。
-
-但很快，你的微博账号被扒了出来。你的学校、你的照片、住址，全部被公开。
-
-一个月后，你收到了一份来自法院的传票——侵犯隐私罪。
-
-你们都输了。`,
-      afterword: '你毁灭了他，但他也毁灭了你。这不是胜利，只是两败俱伤。',
-      color: '#000000'
-    },
-    {
-      id: 'blackmail',
-      name: '非法变现',
-      trigger: 'final_choice === "sell"',
-      title: '终局：非法变现',
-      narrative: `你把照片卖给了一个营销号，净赚六十万。
-
-拿着这笔钱，你退掉了租的房子，给父母转了一万说这是实习奖金，买了张回家的机票。
-
-在机场候机的时候，你又刷到了林屿森——他正在笑着拍广告，像什么都没发生过一样。
-
-照片没发出来。你拿了钱，他继续做他的偶像。
-
-完美犯罪。
-
-只是从那以后，你再也没办法正常追星了。因为你知道了——偶像，不过是一种可以买卖的商品。`,
-      afterword: '你用秘密换了一张回家的机票。但你失去的，是相信任何事情的勇气。',
-      color: '#556B2F'
-    },
-    {
-      id: 'god_view',
-      name: '神之视角',
-      trigger: 'final_choice === "keep"',
-      title: '终局：神之视角',
-      narrative: `你没有发。
-
-你也没有卖。
-
-你只是……保存了下来。那张照片存在你的加密硬盘里，你每天睡前都会打开看一眼。
-
-拥有了毁灭一个人的能力之后，你反而不想毁灭了。
-
-你开始以一种奇怪的方式"守护"他——你会举报那些真正危险的私生饭，会在微博上帮他说话，会在深夜发一些只有自己才懂的暗语。
-
-你们之间的距离，是一张照片的距离。
-
-也是这个世界上最遥远的距离。`,
-      afterword: '你拥有了神的力量，却没有成为神。你成为了一个守着秘密的幽灵。',
-      color: '#4B0082',
-      special: 'god_view_mode'
-    }
-  ],
-
-  // =============================================
-  // 深渊模式（神之视角后续）
-  // =============================================
-  
-  godViewScenarios: [
-    {
-      id: 'watch_paranoia',
-      name: '被害妄想',
-      trigger: 'god_view_mode && days_elapsed >= 7',
-      narrative: '你开始疑神疑鬼。他身边每一个接近的人，你都想知道他们的意图。你甚至开始怀疑自己的判断力。',
-      effects: { sanity: -5 }
-    },
-    {
-      id: 'secret_revelation',
-      name: '秘密泄露',
-      trigger: 'god_view_mode && Math.random() < 0.1',
-      forced: true,
-      narrative: `你的电脑被黑了。
-
-所有照片被上传到了一个匿名论坛。
-
-林屿森的经纪人打电话报警。而你，删掉了自己的所有社交账号，消失了。`,
-      immediateEnding: 'secret_leaked',
-      afterword: '你守了一百天的秘密，最终还是从数字世界的缝隙里泄露了出去。',
-      color: '#8B0000'
-    }
-  ]
-};
-
-</script>
+  <script src="data/endings.js"></script>
   <script>
 /**
  * 私生模拟器 - 偶像配置（ MVP 单偶像版）
@@ -2006,6 +1796,15 @@ ${ending.afterword || ''}`;
   }
 
   // =============================================
+  // 获取下一个事件（用于本地回退）
+  // =============================================
+  
+  function getNextEvent() {
+    const event = selectNextEvent();
+    return processEvent(event);
+  }
+
+  // =============================================
   // 导出 API
   // =============================================
   
@@ -2014,7 +1813,8 @@ ${ending.afterword || ''}`;
     getState: getCurrentState,
     executeChoice: executeChoice,
     executeFinalChoice: executeFinalChoice,
-    evaluateCondition: evaluateCondition
+    evaluateCondition: evaluateCondition,
+    getNextEvent: getNextEvent
   };
 
 })();
@@ -2023,147 +1823,293 @@ ${ending.afterword || ''}`;
   <script>
 /**
  * 私生模拟器 - OpenClaw API 集成
- * 处理与大语言模型后端的通信
+ * 三段式叙事：Result → Buildup → Options
  */
 
 (function() {
   'use strict';
 
-  // =============================================
-  // API 配置
-  // =============================================
-  
   const config = () => window.GAME_CONFIG.api;
-  
-  // =============================================
-  // 状态历史（用于上下文管理）
-  // =============================================
-  
+
+  // 对话历史
   const conversationHistory = [];
 
-  // =============================================
-  // 构建 System Prompt
-  // =============================================
-  
-  function buildSystemPrompt(celebrity, gameState) {
-    const difficultyLabel = {
-      extreme: '炼狱',
-      hard: '困难',
-      medium: '普通',
-      easy: '简单'
-    };
+  // 读取 Prompt 模板
+  function getPromptTemplate() {
+    return window.__GAME_PROMPT__ || `【私生模拟器 - 游戏引擎】
 
-    return `【私生模拟器 - 游戏引擎】
-
-你是"私生模拟器"游戏的叙事引擎。玩家扮演一个极端狂热的私生饭，追踪偶像 ${celebrity.name}（${celebrity.alias}，${celebrity.type}）。
+你是"私生模拟器"游戏的叙事引擎。玩家扮演一个追踪林屿森（顶流男演员）的私生饭。
 
 ## 当前游戏状态
-- 偶像：${celebrity.name} | 难度：${difficultyLabel[celebrity.difficulty]} | 追踪进度：${gameState.progress}%
-- 体力：${gameState.attributes.stamina}/100
-- 资金：¥${gameState.attributes.money}
-- 隐蔽度：${gameState.attributes.stealth}/100
-- 理智：${gameState.attributes.sanity}/100
-- 已追踪天数：${gameState.daysElapsed}天
+- 体力：{stamina}/100
+- 资金：¥{money}
+- 隐蔽度：{stealth}/100
+- 理智：{sanity}/100
+- 进度：{progress}%
+- 追踪天数：{days}天
+- 当前阶段：{phase}
 
-## 游戏阶段
-${gameState.currentPhase === 'endgame' ? '【终局阶段】玩家已获得绝密照片，即将做出最终抉择' : '【正常游戏】资源管理与风险决策'}
+## 三段式叙事节奏
 
-${gameState.godViewMode ? '【深渊模式】玩家进入了"神之视角"状态，理智上限正在持续衰减' : ''}
+**Phase 1 - RESULT：结果叙述**
+玩家做出选择后，生成 80-120 字的结果叙述。风格：冷峻、克制、有感官细节。结果简短有力，像钉子一样扎进去。
 
-## 叙事风格要求
-- 语言：简体中文，第一人称视角
-- 语气：压抑、紧张、黑色幽默
-- 细节：注重感官描写（天气、声音、气味）
-- 节奏：每个叙事块不超过100字，制造悬念
-- 禁止：直接描写暴力/色情内容
+**Phase 2 - BUILDUP：事件铺垫**
+自动生成 100-150 字的叙事铺垫。描写玩家当前处境（时间、地点、氛围、心理）。末尾要有悬念钩子，节奏慢下来。
 
-## 数值规则（严格遵守）
-- 玩家资金低于¥2000时：必须显示"经济危机"相关叙事
-- 隐蔽度低于30时：必须触发安保发现风险
-- 理智低于30时：必须触发心理崩溃相关叙事
-- 追踪进度每+10%，叙述紧张感提升一个等级
+**Phase 3 - OPTIONS：选项呈现**
+铺垫后呈现 2-3 个选项。每个选项要有明确的性格倾向（冒险/保守/极端）。
 
-## 输出格式（严格遵守，仅输出JSON）
+## 叙事风格
+- 第一人称视角
+- 冷峻、压抑、黑色幽默
+- 感官细节：声音、气味、温度、触感
+- 结果叙述：短促有力
+- 铺垫叙述：制造悬念
+- 禁止：暴力/色情描写
+
+## 氛围参考
+| 进度 | 氛围 |
+|------|------|
+| 0-30% | 萌芽期——紧张但可控 |
+| 30-60% | 沉没期——焦虑上升 |
+| 60-90% | 深渊期——压力极大 |
+| 90-100% | 终局——极度紧张 |
+
+## 输出格式（严格遵守，必须仅输出JSON）
+
+Phase=result 时：
 {
-  "narrative": "叙事文本，描述当前场景的细节（100-200字）",
-  "mood": "当前氛围关键词（2-3个）",
-  "changes": {
-    "stamina": 数值变化（含正负符号，如 -10 或 +5）,
-    "money": 数值变化,
-    "stealth": 数值变化,
-    "sanity": 数值变化,
-    "progress": 数值变化
-  },
-  "options": [
-    {
-      "id": "选项ID（英文）",
-      "text": "选项文字（玩家看到的选择）",
-      "risk": "low/medium/high/extreme",
-      "description": "风险提示"
-    }
-  ],
+  "phase": "result",
+  "resultNarrative": "80-120字结果叙述",
+  "mood": "关键词1、关键词2",
+  "changes": {"stamina": 0, "money": 0, "stealth": 0, "sanity": 0, "progress": 0},
+  "options": [],
   "isGameOver": false,
-  "isFinal": false,
-  "endingType": null
+  "isFinal": false
 }
 
-## 核心事件参考
-1. 机票失败 - 高资金消耗
-2. VIP通道走空 - 纯负面事件
-3. GPS追踪器 - 高风险高回报
-4. 地库蹲守 - 进度倒退风险
-5. 手机被删 - 隐蔽度大幅下降
-6. 相机被格式化 - 毁灭性打击
-7. 翻垃圾桶 - 理智换进度
-8. 租对面楼 - 巨额资金换长期优势
+Phase=buildup 时：
+{
+  "phase": "buildup",
+  "buildupNarrative": "100-150字铺垫叙述，末尾要有悬念钩子",
+  "mood": "关键词1、关键词2",
+  "nextEventHint": "下一个事件的方向",
+  "options": [
+    {"id": "a", "text": "选项文字", "risk": "low", "description": "风险提示"},
+    ...
+  ],
+  "isGameOver": false,
+  "isFinal": false
+}
 
-请根据当前状态，选择最合适的下一个事件，生成符合叙事的JSON输出。`;
+Phase=endgame 时：
+{
+  "phase": "endgame",
+  "narrative": "终局叙事",
+  "mood": "关键词",
+  "options": [
+    {"id": "expose", "text": "曝光", "risk": "extreme", "description": "发送照片给媒体"},
+    {"id": "sell", "text": "变现", "risk": "extreme", "description": "卖给狗仔队"},
+    {"id": "keep", "text": "保留", "risk": "low", "description": "不发，也不错"}
+  ],
+  "isGameOver": false,
+  "isFinal": true
+}`;
+  }
+
+  // =============================================
+  // 构建 System Prompt（动态替换变量）
+  // =============================================
+  
+  function buildSystemPrompt(state) {
+    const celebrity = state.celebrity || window.CELEBRITY_POOL?.[0] || { name: '林屿森', alias: '森森', type: '顶流男演员', difficulty: 'hard' };
+    const difficultyLabel = { extreme: '炼狱', hard: '困难', medium: '普通', easy: '简单' };
+
+    let prompt = getPromptTemplate();
+    
+    // 替换占位符
+    prompt = prompt
+      .replace('{stamina}', state.attributes?.stamina ?? 100)
+      .replace('{money}', state.attributes?.money ?? 5000)
+      .replace('{stealth}', state.attributes?.stealth ?? 100)
+      .replace('{sanity}', state.attributes?.sanity ?? 100)
+      .replace('{progress}', state.progress ?? 0)
+      .replace('{days}', state.daysElapsed ?? 0)
+      .replace('{phase}', state.phase ?? 'buildup');
+
+    // 添加偶像信息到开头
+    const celebrityInfo = `
+## 偶像信息
+- 姓名：${celebrity.name}（${celebrity.alias}）
+- 类型：${celebrity.type}
+- 难度：${difficultyLabel[celebrity.difficulty] || '困难'}
+${state.godViewMode ? '\n【深渊模式】理智上限正在持续衰减，你已拥有毁灭他的能力，但你选择了不使用。' : ''}
+${state.currentPhase === 'endgame' ? '\n【终局阶段】玩家已获得绝密照片，即将做出最终抉择。' : ''}
+`;
+    
+    return prompt.replace('【私生模拟器 - 游戏引擎】', '【私生模拟器 - 游戏引擎】' + celebrityInfo);
   }
 
   // =============================================
   // 构建用户消息
   // =============================================
   
-  function buildUserMessage(action, currentState, eventDescription) {
-    const actionLabels = {
-      'buy_ticket_black': '买黄牛票硬闯',
-      'give_up_flight': '放弃航班',
-      'buy_economy': '买经济舱跟随',
-      'rest_hotel': '回酒店休息',
-      'install_gps': '安装GPS定位器',
-      'chase_wrong_car': '追错车',
-      'resist_deletion': '反抗保护手机',
-      'pretend_innocent': '假装路人粉',
-      'decrypt_trash': '翻垃圾桶解密',
-      'rent_apartment': '租对面楼的房子',
-      'accept_loss': '认栽',
-      'confront_informant': '找情报贩子算账',
-      'watch_drama': '吃瓜看戏',
-      'fan_war_attack': '下场对骂',
-      'rest_day': '休整一天',
-      'continue': '继续行动'
-    };
-
-    return `玩家选择了：${actionLabels[action] || action}
+  function buildUserMessage(phase, state, choice, previousResult) {
+    if (phase === 'result') {
+      const actionLabels = {
+        'buy_ticket_black': '买黄牛票硬闯',
+        'give_up_flight': '放弃航班',
+        'buy_economy': '买经济舱跟随',
+        'rest_hotel': '回酒店休息',
+        'install_gps': '安装GPS定位器',
+        'chase_wrong_car': '追错车',
+        'resist_deletion': '反抗保护手机',
+        'pretend_innocent': '假装路人粉',
+        'decrypt_trash': '翻垃圾桶解密',
+        'rent_apartment': '租对面楼的房子',
+        'accept_loss': '认栽',
+        'confront_informant': '找情报贩子算账',
+        'watch_drama': '吃瓜看戏',
+        'fan_war_attack': '下场对骂',
+        'rest_day': '休整一天',
+        'continue': '继续行动',
+        'pretend_noticed': '假装什么都没发生',
+        'rush_greet': '追上去喊他名字',
+        'watch_leave': '默默目送他离开',
+        'accept_smash': '捡起手机默默离开',
+        'argue_back': '理论说自己只是粉丝',
+        'fake_cry': '当场摔在地上大哭',
+        'sasaeng_friend': '主动示好交换情报',
+        'sasaeng_alone': '硬刚不跟她们一起',
+        'give_up_flight2': '直接不登这班机了',
+        'sasaeng_report': '去向管理员告状',
+        'pay_silencer': '付钱封口',
+        'counter_blackmail': '谈判威胁举报他',
+        'ignore_狗仔': '装作不认识走开',
+        'grab_camera': '直接抢他相机',
+        'fake_explain': '说是帮朋友查的',
+        'accept_exposed': '认栽删掉那张纸',
+        'eat_paper': '迅速撕掉塞嘴里',
+        'pretend_staff': '装作很忙往里走',
+        'staff_friendly': '和安保打招呼套近乎',
+        'staff_giveup': '算了赶紧撤',
+        'change_location': '换住处彻底消失几天',
+        'ignore_exposed': '装作没事不回应',
+        'delete_accounts': '注销所有社交账号',
+        'declare_wrong': '发声明澄清没人信',
+        'confront_thief': '找到那个人当面对质',
+        'ignore_theft': '不管了专心追星',
+        'go_to_room': '直接上十八楼',
+        'rent_nearby_room': '在附近开个房间蹲守',
+        'give_up_room': '算了太冒险了',
+        'keep_chasing': '继续追跟到目的地',
+        'slow_down': '减速找个地方停下来',
+        'give_up_chase': '认了被拍到超速就完了',
+        'pose_coffee': '装作送咖啡的混进去',
+        'force_entry': '亮假工作证硬闯',
+        'wait_door': '在门口等看能不能偶遇',
+        'fake_excuse': '接电话敷衍应付',
+        'fake_excuse2': '接电话敷衍应付',
+        'delay_response': '发微信说在忙待会回',
+        'ignore_family': '直接挂掉',
+        'ignore_family2': '直接挂掉',
+        'confess_home': '坦白妈我想回家',
+        'lie_neighbor': '说是实习公司在做调研',
+        'play_dumb': '装傻说不懂她在说什么',
+        'move_away': '第二天就搬家',
+        'lawyer_up': '找律师维权',
+        'disappear': '注销所有账号消失',
+        'buy_water': '买水军控评',
+        'find_expensive': '找更贵的独家渠道',
+        'resell_cheap': '低价转卖情报止损',
+        'give_up_idol': '换个偶像追算了',
+        'fan_war_report': '冷静举报',
+        'fan_war_ignore': '退出不看',
+        'fan_war_ignore2': '退出不看',
+        'protect_idol': '下场控评',
+        'buy_info': '买一份试试',
+        'research_info': '研究他们的情报源',
+        'ignore_hucker': '无视你已经过了相信黄牛的阶段',
+        'rest_properly': '好好睡一觉',
+        'watch_show': '看他的剧集打发时间',
+        'cant_sleep': '根本睡不着满脑子都是他'
+      };
+      return `玩家选择了：${actionLabels[choice] || choice}
 
 当前状态：
-- 体力：${currentState.attributes.stamina}/100
-- 资金：¥${currentState.attributes.money}
-- 隐蔽度：${currentState.attributes.stealth}/100
-- 理智：${currentState.attributes.sanity}/100
-- 进度：${currentState.progress}%
+- 体力：${state.attributes?.stamina ?? 0}/100
+- 资金：¥${state.attributes?.money ?? 0}
+- 隐蔽度：${state.attributes?.stealth ?? 0}/100
+- 理智：${state.attributes?.sanity ?? 0}/100
+- 进度：${state.progress ?? 0}%
 
-请生成这个选择的结果叙事和下一个可选事件。`;
+请生成 RESULT 阶段：玩家这个选择带来的即时结果叙述（80-120字），以及数值变化。必须严格输出 JSON。`;
+    }
+
+    if (phase === 'buildup') {
+      return `当前状态：
+- 体力：${state.attributes?.stamina ?? 0}/100
+- 资金：¥${state.attributes?.money ?? 0}
+- 隐蔽度：${state.attributes?.stealth ?? 0}/100
+- 理智：${state.attributes?.sanity ?? 0}/100
+- 进度：${state.progress ?? 0}%
+- 追踪天数：${state.daysElapsed ?? 0}天
+
+请生成 BUILDUP 阶段：描写玩家当前处境的叙事铺垫（100-150字），末尾要有悬念钩子。然后提供 2-3 个选项。必须严格输出 JSON。`;
+    }
+
+    if (phase === 'endgame') {
+      return `玩家已获得绝密照片。现在需要做出终局选择。
+
+当前状态：
+- 进度：${state.progress ?? 0}%
+- 理智：${state.attributes?.sanity ?? 0}/100
+- 资金：¥${state.attributes?.money ?? 0}
+
+请生成终局叙事和三个选项。必须严格输出 JSON。`;
+    }
+
+    return '请继续游戏叙事。必须严格输出 JSON。';
   }
 
   // =============================================
-  // 调用 OpenClaw API
+  // 调用 API
   // =============================================
   
-  async function callOpenClaw(messages, temperature = 0.8) {
+  async function callLLM(messages) {
     const cfg = config();
     
+    // 检测 API 类型
+    const isOpenAI = cfg.baseUrl?.includes('openai') || cfg.baseUrl?.includes('api.openai');
+    const isMiniMax = cfg.baseUrl?.includes('minimax') || cfg.endpoint?.includes('chatcompletion');
+
     try {
+      if (isMiniMax || isOpenAI) {
+        // OpenAI 兼容格式
+        const response = await fetch(`${cfg.baseUrl}${cfg.endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${cfg.apiKey}`
+          },
+          body: JSON.stringify({
+            model: cfg.model || 'gpt-4o-mini',
+            messages: messages,
+            temperature: phase === 'result' ? 0.7 : 0.9,
+            max_tokens: 600
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API 请求失败: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.choices?.[0]?.message?.content || '';
+      }
+
+      // 默认：当作 OpenClaw 格式
       const response = await fetch(`${cfg.baseUrl}${cfg.endpoint}`, {
         method: 'POST',
         headers: {
@@ -2173,7 +2119,7 @@ ${gameState.godViewMode ? '【深渊模式】玩家进入了"神之视角"状态
         body: JSON.stringify({
           model: cfg.model,
           messages: messages,
-          temperature: temperature,
+          temperature: 0.8,
           max_tokens: 800
         })
       });
@@ -2183,7 +2129,7 @@ ${gameState.godViewMode ? '【深渊模式】玩家进入了"神之视角"状态
       }
 
       const data = await response.json();
-      return data;
+      return data.choices?.[0]?.message?.content || data.response || '';
     } catch (error) {
       console.error('API 调用失败:', error);
       throw error;
@@ -2194,110 +2140,136 @@ ${gameState.godViewMode ? '【深渊模式】玩家进入了"神之视角"状态
   // 解析 LLM 返回的 JSON
   // =============================================
   
-  function parseLLMResponse(text) {
+  let phase = 'buildup'; // 当前相位
+
+  function parseResponse(text) {
     try {
-      // 尝试提取 JSON 块
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
       throw new Error('无法解析 JSON');
     } catch (error) {
-      console.warn('JSON 解析失败，尝试修复:', error);
-      // 回退到本地处理
+      console.warn('JSON 解析失败:', error);
+      // 回退
       return null;
     }
   }
 
   // =============================================
-  // 主游戏循环（与 LLM 交互）
-  // =============================================
-  
-  async function playWithLLM(action, gameState, celebrity) {
-    const systemPrompt = buildSystemPrompt(celebrity, gameState);
-    
-    // 构建消息历史
-    const messages = [
-      { role: 'system', content: systemPrompt }
-    ];
-    
-    // 添加历史
-    conversationHistory.forEach(msg => {
-      messages.push(msg);
-    });
-    
-    // 添加当前行动
-    const userMessage = buildUserMessage(action, gameState, gameState.currentEvent?.description);
-    messages.push({ role: 'user', content: userMessage });
-    
-    // 调用 API
-    let response;
-    try {
-      response = await callOpenClaw(messages);
-    } catch (error) {
-      // API 失败时回退到本地引擎
-      console.warn('LLM 不可用，回退到本地引擎');
-      return null;
-    }
-    
-    // 解析响应
-    const content = response.choices?.[0]?.message?.content;
-    if (!content) {
-      console.warn('API 返回内容为空');
-      return null;
-    }
-    
-    // 保存到历史
-    conversationHistory.push({ role: 'user', content: userMessage });
-    conversationHistory.push({ role: 'assistant', content: content });
-    
-    // 限制历史长度
-    if (conversationHistory.length > 20) {
-      conversationHistory.splice(0, 4);
-    }
-    
-    return parseLLMResponse(content);
-  }
-
-  // =============================================
-  // 模式选择：本地引擎 vs LLM 增强
-  // =============================================
-  
-  async function processAction(action) {
-    const gameState = window.SasaengSimulator.getState();
-    
-    // 优先尝试 LLM
-    if (window.GAME_CONFIG.api.apiKey && window.GAME_CONFIG.api.apiKey !== 'YOUR_OPENCLAW_API_KEY') {
-      try {
-        const llmResult = await playWithLLM(action, gameState, GameState.celebrity);
-        if (llmResult) {
-          return llmResult;
-        }
-      } catch (e) {
-        console.warn('LLM 模式失败:', e);
-      }
-    }
-    
-    // 回退到本地引擎
-    return window.SasaengSimulator.executeChoice({ id: action }, gameState.currentEvent?.eventId);
-  }
-
-  // =============================================
-  // 重置对话历史
+  // 重置对话
   // =============================================
   
   function resetConversation() {
     conversationHistory.length = 0;
+    phase = 'buildup';
   }
 
   // =============================================
-  // 导出 API
+  // 对外 API
   // =============================================
-  
+
+  /**
+   * 处理玩家选择 → 生成结果叙述（Phase 1）
+   */
+  async function processChoice(choiceId, gameState) {
+    const systemPrompt = buildSystemPrompt({ ...gameState, phase: 'result' });
+    const userMessage = buildUserMessage('result', gameState, choiceId);
+
+    const messages = [
+      { role: 'system', content: systemPrompt }
+    ];
+    
+    // 添加简短历史（最近3条）
+    const recentHistory = conversationHistory.slice(-6);
+    recentHistory.forEach(msg => messages.push(msg));
+
+    messages.push({ role: 'user', content: userMessage });
+
+    try {
+      const content = await callLLM(messages);
+      const parsed = parseResponse(content);
+
+      if (parsed) {
+        conversationHistory.push({ role: 'user', content: userMessage });
+        conversationHistory.push({ role: 'assistant', content: content });
+        phase = 'buildup';
+        return { phase: 'result', data: parsed, raw: content };
+      }
+    } catch (e) {
+      console.warn('LLM Result 失败:', e);
+    }
+
+    // LLM 失败，回退到本地
+    phase = 'buildup';
+    return { phase: 'result', data: null, fallback: true };
+  }
+
+  /**
+   * 生成事件铺垫 + 选项（Phase 2）
+   */
+  async function generateBuildup(gameState) {
+    const systemPrompt = buildSystemPrompt({ ...gameState, phase: 'buildup' });
+    const userMessage = buildUserMessage('buildup', gameState);
+
+    const messages = [
+      { role: 'system', content: systemPrompt }
+    ];
+
+    const recentHistory = conversationHistory.slice(-4);
+    recentHistory.forEach(msg => messages.push(msg));
+
+    messages.push({ role: 'user', content: userMessage });
+
+    try {
+      const content = await callLLM(messages);
+      const parsed = parseResponse(content);
+
+      if (parsed) {
+        conversationHistory.push({ role: 'user', content: userMessage });
+        conversationHistory.push({ role: 'assistant', content: content });
+        phase = 'options';
+        return { phase: 'buildup', data: parsed, raw: content };
+      }
+    } catch (e) {
+      console.warn('LLM Buildup 失败:', e);
+    }
+
+    // LLM 失败，回退
+    phase = 'options';
+    return { phase: 'buildup', data: null, fallback: true };
+  }
+
+  /**
+   * 生成终局叙事（Phase Endgame）
+   */
+  async function generateEndgame(gameState) {
+    const systemPrompt = buildSystemPrompt({ ...gameState, phase: 'endgame' });
+    const userMessage = buildUserMessage('endgame', gameState);
+
+    const messages = [
+      { role: 'system', content: systemPrompt }
+    ];
+
+    try {
+      const content = await callLLM(messages);
+      const parsed = parseResponse(content);
+      if (parsed) {
+        return { phase: 'endgame', data: parsed };
+      }
+    } catch (e) {
+      console.warn('LLM Endgame 失败:', e);
+    }
+    return { phase: 'endgame', data: null, fallback: true };
+  }
+
+  // 导出
   window.GameAPI = {
-    processAction: processAction,
-    resetConversation: resetConversation,
-    buildSystemPrompt: buildSystemPrompt
+    processChoice,
+    generateBuildup,
+    generateEndgame,
+    resetConversation,
+    buildSystemPrompt
   };
 
 })();
@@ -2385,6 +2357,14 @@ ${gameState.godViewMode ? '【深渊模式】玩家进入了"神之视角"状态
       
       <!-- 变化提示 -->
       <div class="changes-panel" id="changesPanel"></div>
+      
+      <!-- 结果叙述区域（Phase 1） -->
+      <div class="result-panel" id="resultPanel" style="display: none;">
+        <div class="result-label">结果</div>
+        <p class="result-text" id="resultText"></p>
+        <div class="changes-panel" id="resultChanges"></div>
+        <button class="continue-btn" id="continueBtn" onclick="continueToNext()">继续 ▸</button>
+      </div>
       
       <!-- 叙事区域 -->
       <div class="narrative-panel" id="narrativePanel">
@@ -2560,67 +2540,229 @@ ${gameState.godViewMode ? '【深渊模式】玩家进入了"神之视角"状态
         `).join('');
       }
     }
+
+    // 显示铺垫 + 选项（Phase 2）
+    function showBuildup(data) {
+      const narrativePanel = document.getElementById('narrativePanel');
+      const optionsPanel = document.getElementById('optionsPanel');
+      
+      // 显示叙事铺垫
+      if (data && data.buildupNarrative) {
+        document.getElementById('narrativeText').textContent = data.buildupNarrative;
+        if (data.mood) {
+          const tags = data.mood.split('、').map(m => `<span class="mood-tag">${m.trim()}</span>`).join('');
+          document.getElementById('moodTags').innerHTML = tags;
+        }
+      }
+      
+      narrativePanel.style.display = 'block';
+      
+      // 渲染选项
+      if (data && data.options && data.options.length > 0) {
+        optionsPanel.innerHTML = data.options.map(opt => `
+          <button class="option-btn" onclick="selectOption('${opt.id}')">
+            <span class="option-text">${opt.text}</span>
+            <span class="option-risk risk-${opt.risk || 'medium'}">${opt.risk || 'medium'}</span>
+          </button>
+        `).join('');
+      } else {
+        optionsPanel.innerHTML = '';
+      }
+    }
+
+    // 显示结果叙述（Phase 1）
+    function showResult(data, changes) {
+      const resultPanel = document.getElementById('resultPanel');
+      const narrativePanel = document.getElementById('narrativePanel');
+      const optionsPanel = document.getElementById('optionsPanel');
+      
+      // 隐藏叙事和选项
+      narrativePanel.style.display = 'none';
+      optionsPanel.innerHTML = '';
+      
+      // 显示结果
+      if (data && data.resultNarrative) {
+        document.getElementById('resultText').textContent = data.resultNarrative;
+        if (data.mood) {
+          const tags = data.mood.split('、').map(m => `<span class="mood-tag">${m.trim()}</span>`).join('');
+          document.getElementById('moodTags').innerHTML = tags;
+        }
+      } else {
+        document.getElementById('resultText').textContent = '……';
+      }
+      
+      // 显示属性变化
+      const changesEl = document.getElementById('resultChanges');
+      if (changes) {
+        let html = '';
+        for (const [key, value] of Object.entries(changes)) {
+          if (value === 0 || value === undefined) continue;
+          const cls = value > 0 ? 'change-positive' : 'change-negative';
+          const sign = value > 0 ? '+' : '';
+          const labels = { stamina: '体力', money: '资金', stealth: '隐蔽', sanity: '理智', progress: '进度' };
+          html += `<span class="change-item ${cls}">${labels[key] || key}: ${sign}${value}</span>`;
+        }
+        changesEl.innerHTML = html || '';
+      }
+      
+      resultPanel.style.display = 'block';
+    }
+
+    // 继续到下一个事件（Phase 2：铺垫 + 选项）
+    async function continueToNext() {
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      const resultPanel = document.getElementById('resultPanel');
+      resultPanel.style.display = 'none';
+      
+      const state = window.SasaengSimulator.getState();
+      
+      // 检查是否进入终局
+      if (state.progress >= 100 && !state.isGameOver) {
+        await handleEndgame();
+        return;
+      }
+      
+      // 检查游戏结束
+      checkGameOverResult(state);
+      if (state.isGameOver) return;
+      
+      // 生成铺垫 + 选项（Phase 2）
+      try {
+        const buildup = await window.GameAPI.generateBuildup(state);
+        if (buildup && buildup.data) {
+          // 应用 LLM 返回的数值变化（如果有）
+          if (buildup.data.changes) {
+            Object.keys(buildup.data.changes).forEach(key => {
+              if (state.attributes[key] !== undefined) {
+                state.attributes[key] = Math.max(0, state.attributes[key] + buildup.data.changes[key]);
+              }
+            });
+            updateUI(state);
+          }
+          showBuildup(buildup.data);
+        } else {
+          // 回退到本地引擎生成下一个事件
+          const nextEvent = window.SasaengSimulator.getNextEvent();
+          showBuildupFromLocal(nextEvent);
+        }
+      } catch (e) {
+        console.warn('LLM Buildup 失败，回退到本地:', e);
+        const nextEvent = window.SasaengSimulator.getNextEvent();
+        showBuildupFromLocal(nextEvent);
+      }
+      
+      isProcessing = false;
+    }
+
+    // 本地回退：从本地引擎获取下一个事件
+    function showBuildupFromLocal(event) {
+      const narrativePanel = document.getElementById('narrativePanel');
+      narrativePanel.style.display = 'block';
+      
+      if (event) {
+        document.getElementById('eventName').textContent = event.eventName || '';
+        document.getElementById('narrativeText').textContent = event.description || '...';
+        document.getElementById('moodTags').innerHTML = '';
+        
+        const optionsPanel = document.getElementById('optionsPanel');
+        if (event.options && event.options.length > 0) {
+          optionsPanel.innerHTML = event.options.map(opt => `
+            <button class="option-btn" onclick="selectOption('${opt.id}')">
+              <span class="option-text">${opt.text}</span>
+              <span class="option-risk risk-${opt.risk || 'medium'}">${opt.risk || 'medium'}</span>
+            </button>
+          `).join('');
+        }
+      }
+    }
     
     async function selectOption(optionId) {
       if (isProcessing) return;
       isProcessing = true;
       
-      // 显示加载状态
-      document.getElementById('narrativeText').innerHTML = '<span class="loading">处理中</span>';
+      // 隐藏叙事和选项
+      document.getElementById('narrativePanel').style.display = 'none';
       document.getElementById('optionsPanel').innerHTML = '';
       
+      const state = window.SasaengSimulator.getState();
+      
       try {
-        // 调用 API 或本地引擎
-        const result = await window.GameAPI.processAction(optionId);
+        // Phase 1: 生成结果叙述
+        const result = await window.GameAPI.processChoice(optionId, state);
         
-        if (result) {
-          // 显示变化
-          showChanges(result.changes);
-          
-          // 更新状态
-          const state = window.SasaengSimulator.getState();
+        if (result && result.data) {
+          // 应用 LLM 返回的数值变化
+          const changes = result.data.changes || {};
+          Object.keys(changes).forEach(key => {
+            if (state.attributes[key] !== undefined) {
+              state.attributes[key] = Math.max(0, state.attributes[key] + changes[key]);
+            }
+            if (key === 'progress') {
+              state.progress = Math.max(0, Math.min(100, state.progress + changes[key]));
+            }
+          });
           updateUI(state);
           
           // 检查游戏结束
-          if (result.isGameOver) {
-            showGameOver(result);
+          if (result.data.isGameOver) {
+            showGameOver({ narrative: result.data.resultNarrative || '', isGameOver: true });
+            isProcessing = false;
             return;
           }
           
-          // 检查终局
-          if (result.isFinal) {
-            showFinalChoice(result);
+          // 检查是否达到终局
+          if (state.progress >= 100) {
+            showResult(result.data, changes);
             return;
           }
           
-          // 显示新事件
-          if (result.narrative) {
-            document.getElementById('narrativeText').textContent = result.narrative;
+          // 显示结果叙述（Phase 1），然后自动进入 Phase 2
+          showResult(result.data, changes);
+          isProcessing = false;
+          return;
+        }
+        
+        // 回退到本地引擎
+        const localResult = window.SasaengSimulator.executeChoice({ id: optionId }, state.currentEvent?.eventId);
+        if (localResult) {
+          showChanges(localResult.changes);
+          updateUI(window.SasaengSimulator.getState());
+          
+          if (localResult.isGameOver) {
+            showGameOver(localResult);
+            isProcessing = false;
+            return;
           }
           
-          // 渲染新选项
-          if (result.options && result.options.length > 0) {
-            document.getElementById('optionsPanel').innerHTML = result.options.map(opt => `
-              <button class="option-btn" onclick="selectOption('${opt.id}')">
-                <span class="option-text">${opt.text}</span>
-                <span class="option-risk risk-${opt.risk || 'medium'}">${opt.risk || 'medium'}</span>
-              </button>
-            `).join('');
-          } else {
-            document.getElementById('optionsPanel').innerHTML = `
-              <button class="option-btn" onclick="selectOption('continue')">
-                <span class="option-text">继续</span>
-                <span class="option-risk risk-low">继续</span>
-              </button>
-            `;
+          if (localResult.isFinal) {
+            showFinalChoice(localResult);
+            isProcessing = false;
+            return;
           }
+          
+          // 显示结果叙述，然后自动进入 Phase 2
+          showResult({ resultNarrative: localResult.narrative || '……', mood: '' }, localResult.changes);
+          isProcessing = false;
+          return;
         }
       } catch (error) {
         console.error('游戏处理失败:', error);
-        document.getElementById('narrativeText').textContent = '游戏出错，请重试。';
-      } finally {
-        isProcessing = false;
+        // 回退到本地引擎
+        const localResult = window.SasaengSimulator.executeChoice({ id: optionId }, state.currentEvent?.eventId);
+        if (localResult) {
+          showChanges(localResult.changes);
+          updateUI(window.SasaengSimulator.getState());
+          if (localResult.isGameOver) {
+            showGameOver(localResult);
+          } else {
+            showResult({ resultNarrative: localResult.narrative || '……' }, localResult.changes);
+          }
+        }
       }
+      
+      isProcessing = false;
     }
     
     function showFinalChoice(result) {
