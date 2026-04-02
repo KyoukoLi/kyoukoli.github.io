@@ -4,17 +4,2030 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>私生模拟器 | Sasaeng Simulator</title>
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+/**
+ * 私生模拟器 - 暗色调 UI
+ * 心理惊悚 + 高对比度 + 低饱和度
+ */
+
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-card: #1a1a1a;
+  --bg-hover: #252525;
+  
+  --text-primary: #e0e0e0;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+  
+  --accent-red: #c0392b;
+  --accent-orange: #d35400;
+  --accent-yellow: #f39c12;
+  --accent-green: #27ae60;
+  --accent-blue: #2980b9;
+  --accent-purple: #8e44ad;
+  
+  --border-color: #2a2a2a;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  
+  --font-main: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SF Mono', 'Consolas', monospace;
+  
+  --radius: 4px;
+  --transition: 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* 背景纹理 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at top left, rgba(30, 30, 30, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(20, 20, 20, 0.5) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 主容器 */
+.game-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 标题区域 */
+.game-header {
+  text-align: center;
+  padding: 30px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.game-title {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 8px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.game-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 4px;
+}
+
+/* 偶像信息卡 */
+.celebrity-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.celebrity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.celebrity-name {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.celebrity-type {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.difficulty-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.difficulty-extreme { background: var(--accent-red); color: white; }
+.difficulty-hard { background: var(--accent-orange); color: white; }
+.difficulty-medium { background: var(--accent-yellow); color: #000; }
+.difficulty-easy { background: var(--accent-green); color: white; }
+
+/* 属性面板 */
+.attributes-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.attribute-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 15px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.attribute-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transition: var(--transition);
+}
+
+.attribute-card.stamina::before { background: var(--accent-green); }
+.attribute-card.money::before { background: var(--accent-yellow); }
+.attribute-card.stealth::before { background: var(--accent-purple); }
+.attribute-card.sanity::before { background: var(--accent-red); }
+
+.attribute-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.attribute-value {
+  font-size: 24px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.attribute-value.low { color: var(--accent-red); }
+.attribute-value.medium { color: var(--accent-orange); }
+.attribute-value.high { color: var(--accent-green); }
+
+.attribute-bar {
+  height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.attribute-bar-fill {
+  height: 100%;
+  transition: var(--transition);
+  border-radius: 2px;
+}
+
+.stamina .attribute-bar-fill { background: var(--accent-green); }
+.money .attribute-bar-fill { background: var(--accent-yellow); }
+.stealth .attribute-bar-fill { background: var(--accent-purple); }
+.sanity .attribute-bar-fill { background: var(--accent-red); }
+
+/* 进度面板 */
+.progress-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.progress-value {
+  font-size: 18px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-red), var(--accent-orange));
+  transition: width 0.5s ease;
+  border-radius: 4px;
+}
+
+.progress-stage {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* 叙事区域 */
+.narrative-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 25px;
+  margin-bottom: 20px;
+  min-height: 200px;
+  position: relative;
+}
+
+.narrative-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.narrative-text::first-letter {
+  font-size: 1.5em;
+  font-weight: 500;
+  float: left;
+  margin-right: 8px;
+  line-height: 1;
+}
+
+.event-name {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+}
+
+.mood-tags {
+  margin-top: 15px;
+  display: flex;
+  gap: 8px;
+}
+
+.mood-tag {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+/* 选项区域 */
+.options-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.option-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 14px;
+}
+
+.option-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-orange);
+  transform: translateX(5px);
+}
+
+.option-btn:active {
+  transform: translateX(5px) scale(0.98);
+}
+
+.option-text {
+  flex: 1;
+}
+
+.option-risk {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-left: 15px;
+}
+
+.risk-low { background: rgba(39, 174, 96, 0.2); color: var(--accent-green); }
+.risk-medium { background: rgba(243, 156, 18, 0.2); color: var(--accent-yellow); }
+.risk-high { background: rgba(211, 84, 0, 0.2); color: var(--accent-orange); }
+.risk-extreme { background: rgba(192, 57, 43, 0.2); color: var(--accent-red); }
+
+/* 状态变化提示 */
+.changes-panel {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 15px;
+  margin-bottom: 20px;
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.changes-panel.show {
+  display: block;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.change-item {
+  display: inline-block;
+  margin-right: 15px;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+}
+
+.change-positive { background: rgba(39, 174, 96, 0.15); color: var(--accent-green); }
+.change-negative { background: rgba(192, 57, 43, 0.15); color: var(--accent-red); }
+
+/* 游戏结束界面 */
+.game-over-panel {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.game-over-title {
+  font-size: 24px;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+  color: var(--accent-red);
+}
+
+.game-over-narrative {
+  font-size: 14px;
+  line-height: 2;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
+
+.restart-btn {
+  background: var(--accent-red);
+  border: none;
+  color: white;
+  padding: 15px 40px;
+  font-size: 14px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  font-family: var(--font-main);
+}
+
+.restart-btn:hover {
+  background: #a93226;
+  transform: scale(1.05);
+}
+
+/* 开始界面 */
+.start-panel {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.start-title {
+  font-size: 32px;
+  letter-spacing: 6px;
+  margin-bottom: 15px;
+}
+
+.start-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.start-btn {
+  background: var(--accent-red);
+  border: none;
+  color: white;
+  padding: 18px 60px;
+  font-size: 16px;
+  letter-spacing: 6px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  font-family: var(--font-main);
+  margin-bottom: 30px;
+}
+
+.start-btn:hover {
+  background: #a93226;
+  transform: scale(1.05);
+}
+
+.warning-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* 底部状态栏 */
+.status-bar {
+  margin-top: auto;
+  padding: 15px 0;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* 加载动画 */
+.loading {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-muted);
+}
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--accent-red);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 深渊模式特效 */
+.god-view-mode .narrative-panel {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 30px rgba(142, 68, 173, 0.2);
+}
+
+.god-view-mode .progress-bar-fill {
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-red));
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .attributes-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .game-title {
+    font-size: 22px;
+    letter-spacing: 4px;
+  }
+  
+  .celebrity-card {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+</style>
   
   <!-- 数据文件 -->
-  <script src="data/config.js"></script>
-  <script src="data/events.js"></script>
+  <script>
+/**
+ * 私生模拟器 - 核心配置文件
+ * 这里是你唯一需要手动修改的地方
+ */
+
+window.GAME_CONFIG = {
+  // ==========================================
+  // API 配置 - 替换为你自己的配置
+  // ==========================================
+  api: {
+    // 方案 A: OpenClaw 本地网关（如果你在 Mac mini 上运行）
+    baseUrl: 'http://localhost:18789',
+    endpoint: '/api/chat',
+    apiKey: 'YOUR_OPENCLAW_API_KEY', // 本地网关通常不需要 key，留空或填 sk-local
+    
+    // 方案 B: MiniMax API（如果你想直接调用）
+    // baseUrl: 'https://api.minimax.chat',
+    // endpoint: '/v1/text/chatcompletion_v2',
+    // apiKey: 'YOUR_MINIMAX_API_KEY',
+    
+    // 方案 C: OpenAI 兼容接口
+    // baseUrl: 'https://api.openai.com',
+    // endpoint: '/v1/chat/completions',
+    // apiKey: 'YOUR_OPENAI_API_KEY',
+    
+    // 模型选择
+    model: 'MiniMax-M2.5-Highspeed',
+  },
+
+  // ==========================================
+  // 游戏数值配置
+  // ==========================================
+  game: {
+    // 初始属性
+    initialAttributes: {
+      stamina: 100,
+      money: 5000,
+      stealth: 100,
+      sanity: 100
+    },
+    
+    // 追踪进度（百分比）
+    initialProgress: 0,
+    
+    // 每日基础消耗
+    dailyDrain: {
+      stamina: 5,
+      money: 50,
+      sanity: 3
+    },
+    
+    // 属性上限
+    maxAttributes: {
+      stamina: 100,
+      money: Infinity, // 钱没有上限，但会归零触发 Game Over
+      stealth: 100,
+      sanity: 100
+    },
+    
+    // 属性下限（归零阈值）
+    minAttributes: {
+      stamina: 0,
+      money: 0,
+      stealth: 0,
+      sanity: 0
+    },
+    
+    // 理智衰减阶段（进度达到后，理智上限开始下降）
+    sanityDecayThreshold: 0.70, // 70% 进度时开始
+    
+    // 游戏模式
+    mode: 'normal', // 'normal' | 'god_view' | 'endgame'
+    
+    // 调试模式（显示更多日志）
+    debug: false
+  }
+};
+
+// 导出配置（Node.js 环境用）
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = window.GAME_CONFIG;
+}
+
+</script>
+  <script>
+/**
+ * 私生模拟器 - 事件库（JS版本）
+ * 从 events.json 复制而来，可直接通过 <script> 标签加载
+ */
+
+window.EVENT_LIBRARY = {
+  
+  coreEvents: [
+    {
+      id: 'flight_failed',
+      name: '卡机票',
+      description: '登机口外，VIP通道的门紧闭。广播响起——林屿森乘坐的航班已经开始登机。你站在人群里，看着那道门，心跳擂在耳膜上。',
+      trigger: { condition: 'progress >= 5', weight: 15, cooldown: 3 },
+      options: [
+        {
+          text: '买黄牛票硬闯',
+          action: 'buy_ticket_black',
+          effects: { money: -2000, stamina: -10, progress: 8 },
+          successRate: 0.4,
+          failEffects: { stealth: -30, sanity: -5 },
+          risk: 'high'
+        },
+        {
+          text: '放弃，另找机会',
+          action: 'give_up_flight',
+          effects: { stamina: -15, progress: -3, sanity: -5 },
+          risk: 'low'
+        },
+        {
+          text: '买经济舱跟着',
+          action: 'buy_economy',
+          effects: { money: -1500, stamina: -5, progress: 5, stealth: -10 },
+          risk: 'medium'
+        }
+      ]
+    },
+    {
+      id: 'vip_pass_empty',
+      name: 'VIP通道走空',
+      description: '苦等三小时，腿已经麻了。机场工作人员开始收拾引导牌——他早从另一个出口走了。窗外，车尾灯在夜色里拖成两道红线，消失了。',
+      trigger: { condition: 'progress >= 10', weight: 20, cooldown: 2 },
+      forced: true,
+      options: [
+        {
+          text: '认栽，回酒店休息',
+          action: 'rest_hotel',
+          effects: { stamina: +20, money: -200, sanity: -10 },
+          risk: 'low'
+        },
+        {
+          text: '打探特殊通道位置',
+          action: 'research_vip_route',
+          effects: { money: -300, stealth: -5, progress: 3 },
+          risk: 'medium'
+        }
+      ]
+    },
+    {
+      id: 'gps_tracker',
+      name: '装车底定位器',
+      description: '地下停车场弥漫着机油味。保姆车熄着火，安静得像一头沉睡的巨兽。你蹲在车底，手里攥着GPS定位器，指关节泛白。',
+      trigger: { condition: 'progress >= 20 && stealth >= 50', weight: 10, cooldown: 5 },
+      options: [
+        {
+          text: '立刻安装',
+          action: 'install_gps',
+          effects: { money: -500, stealth: -40 },
+          successRate: 0.55,
+          successEffects: { progress: 25 },
+          failEffects: { stealth: -50, sanity: -15 },
+          risk: 'extreme'
+        },
+        {
+          text: '先观察安保情况',
+          action: 'observe_security',
+          effects: { stamina: -10, stealth: -5 },
+          successRate: 0.7,
+          successEffects: { progress: 5 },
+          failEffects: { progress: -5 },
+          risk: 'high'
+        }
+      ]
+    },
+    {
+      id: 'underground_bait',
+      name: '地库蹲守分身术',
+      description: '两辆一模一样的保姆车同时驶出地库。尾灯划破黑暗，往两个完全相反的方向散去。你只来得及看清一道车牌尾号——另一辆，已经消失在拐角。',
+      trigger: { condition: 'progress >= 30', weight: 18, cooldown: 3 },
+      options: [
+        {
+          text: '猛踩油门追另一辆',
+          action: 'chase_wrong_car',
+          effects: { money: -300, stamina: -20, stealth: -20, progress: -10, sanity: -15 },
+          risk: 'extreme'
+        },
+        {
+          text: '冷静分析路线',
+          action: 'analyze_route',
+          effects: { stamina: -10, sanity: -5 },
+          successRate: 0.5,
+          successEffects: { progress: 8 },
+          failEffects: { progress: -5 },
+          risk: 'medium'
+        }
+      ]
+    },
+    {
+      id: 'phone_deleted',
+      name: '近距离手机被删',
+      description: '助理划过你手机屏幕，一张张照片缩进垃圾桶。"最后一次，明白吗？"林屿森从你身边经过，没有看你一眼。',
+      trigger: { condition: 'progress >= 40', weight: 22, cooldown: 2 },
+      options: [
+        {
+          text: '配合删照片，假装路人粉',
+          action: 'pretend_innocent',
+          effects: { stealth: -35, sanity: -10, progress: -15 },
+          risk: 'medium'
+        },
+        {
+          text: '反抗，保护手机',
+          action: 'resist_deletion',
+          effects: { stealth: -60, money: -2000, sanity: -20, progress: -20 },
+          risk: 'extreme',
+          riskEvent: 'police_involved'
+        },
+        {
+          text: '跪地求饶装可怜',
+          action: 'fake_surrender',
+          effects: { sanity: -25, stealth: -10 },
+          successRate: 0.6,
+          successEffects: { progress: 5 },
+          failEffects: { stealth: -40, progress: -10 },
+          risk: 'high'
+        }
+      ]
+    },
+    {
+      id: 'camera_wiped',
+      name: 'Staff格式化相机',
+      description: '快门声出卖了你。助理把存储卡拔出来塞进口袋。"滚。"两个字，没有多余的表情。',
+      trigger: { condition: 'progress >= 25 && stealth <= 40', weight: 25, cooldown: 4 },
+      forced: true,
+      options: [
+        {
+          text: '跪求放过',
+          action: 'beg_forgiveness',
+          effects: { sanity: -30, money: -1000, stealth: -15, progress: -30 },
+          risk: 'high'
+        },
+        {
+          text: '硬刚，威胁报警',
+          action: 'threaten_police',
+          effects: { stealth: -50, sanity: -20, money: -3000, progress: -40 },
+          risk: 'extreme',
+          riskEvent: 'blacklist'
+        }
+      ]
+    },
+    {
+      id: 'trash_treasure',
+      name: '翻垃圾桶获门牌',
+      description: '凌晨两点，酒店后巷。厨余垃圾的味道直冲鼻腔。你戴着手套的手在剩饭和包装盒之间翻找，指尖触到一张被撕碎的快递单——上面有房间号。',
+      trigger: { condition: 'true', weight: 30, cooldown: 2 },
+      options: [
+        {
+          text: '拼凑碎片获取地址',
+          action: 'decrypt_trash',
+          effects: { sanity: -15, stealth: -5 },
+          successRate: 0.65,
+          successEffects: { progress: 20, stealth: +10 },
+          failEffects: { sanity: -10, progress: 5 },
+          risk: 'medium'
+        },
+        {
+          text: '太恶心了，放弃',
+          action: 'abandon_trash',
+          effects: { sanity: -5 },
+          risk: 'low'
+        }
+      ]
+    },
+    {
+      id: 'rent_building',
+      name: '租对面楼的房子',
+      description: '中介推开窗，灰尘飞扬。对面阳台上晾着一件衬衫——那是林屿森的房间。你深吸一口气，房产证上的名字不重要。',
+      trigger: { condition: 'progress >= 35 && money >= 8000', weight: 8, cooldown: 10, oneTime: true },
+      forced: true,
+      options: [
+        {
+          text: '租下，月租 ¥4500',
+          action: 'rent_apartment',
+          effects: { money: -4500, stealth: +30, sanity: +15 },
+          permanent: { rentedApartment: true, dailyProgress: 3, dailyCostReduction: 0.8 },
+          risk: 'high'
+        },
+        {
+          text: '太冒险了，再想想',
+          action: 'defer_rent',
+          effects: { sanity: -5 },
+          risk: 'low'
+        }
+      ]
+    }
+  ],
+
+  dailyEvents: [
+    {
+      id: 'idol_gossip',
+      name: '刷到林屿森热搜',
+      description: '热搜第一：#林屿森新剧路透#。评论区粉丝在尖叫。你缩在出租屋的床上，屏幕的光映在脸上。这个人，正在改变你的生活。',
+      trigger: { condition: 'true', weight: 40 },
+      effects: { sanity: -10, stealth: +5 },
+      options: [
+        { text: '跟着粉丝一起嗨', action: 'watch_drama', effects: { sanity: +5 }, risk: 'low' },
+        { text: '冷静吃瓜', action: 'fan_war_ignore', effects: {}, risk: 'low' },
+        { text: '下场控评', action: 'protect_idol', effects: { stamina: -15, sanity: +10 }, risk: 'medium' }
+      ]
+    },
+    {
+      id: 'fan_war',
+      name: '粉圈骂战',
+      description: '对家在超话阴阳怪气。"演技差、资源咖"——每一条都在扎你的心。你的手指悬在键盘上。骂，还是不骂？',
+      trigger: { condition: 'true', weight: 35 },
+      effects: { sanity: -15 },
+      options: [
+        { text: '下场对骂', action: 'fan_war_attack', effects: { sanity: -20, stamina: -10 }, risk: 'high' },
+        { text: '冷静举报', action: 'fan_war_report', effects: { stamina: -5, stealth: -5 }, risk: 'low' },
+        { text: '退出不看', action: 'fan_war_ignore2', effects: { sanity: +5 }, risk: 'low' }
+      ]
+    },
+    {
+      id: 'false_alarm',
+      name: '假情报',
+      description: '你花 ¥800 从情报贩子那买了林屿森今天的行程。酒店地址、房间号、甚至穿了什么颜色的衣服。赶到时——前台说这位客人一周前就退房了。',
+      trigger: { condition: 'progress >= 15', weight: 30 },
+      effects: { money: -800, sanity: -10 },
+      options: [
+        { text: '认栽', action: 'accept_loss', effects: { sanity: -5 }, risk: 'low' },
+        { text: '找情报贩子算账', action: 'confront_informant', effects: { stealth: -15, sanity: -10 }, risk: 'high' }
+      ]
+    },
+    {
+      id: 'rest_day',
+      name: '休整日',
+      description: '连续多日奔波后，你决定休息一天。拉上窗帘，房间暗得像地下室。你躺在床上，盯着天花板。他现在在哪里？在做什么？',
+      trigger: { condition: 'stamina <= 30', weight: 50 },
+      options: [
+        { text: '好好睡一觉', action: 'rest_properly', effects: { stamina: +30, sanity: +10, money: -100 }, risk: 'low' },
+        { text: '看他的剧集打发时间', action: 'watch_show', effects: { sanity: +5 }, risk: 'low' },
+        { text: '根本睡不着，满脑子都是他', action: 'cant_sleep', effects: { stamina: +5, sanity: -15 }, risk: 'medium' }
+      ]
+    },
+    {
+      id: 'hucker_ad',
+      name: '黄牛推销',
+      description: '微信弹出一条消息："林屿森下周行程单，¥500，要的来。"你点开看了看，比你花了 ¥2000 搞到的还详细。妈的。',
+      trigger: { condition: 'progress >= 10', weight: 35 },
+      effects: {},
+      options: [
+        { text: '买一份试试', action: 'buy_info', effects: { money: -500, progress: 3 }, risk: 'medium' },
+        { text: '研究他们的情报源', action: 'research_info', effects: { stamina: -10, sanity: -5 }, risk: 'low' },
+        { text: '无视，你已经过了相信黄牛的阶段', action: 'ignore_hucker', effects: {}, risk: 'low' }
+      ]
+    }
+  ],
+
+  randomEvents: [
+    {
+      id: 'idol_stared',
+      name: '林屿森直视了你',
+      description: '机场到达大厅，茫茫人海。他的目光扫过来——然后停住了。两米距离，你们对视了整整一秒。他皱了皱眉，转身上了保姆车，没有说一个字。',
+      trigger: { condition: 'stealth <= 40', weight: 50 },
+      forced: true,
+      effects: { stealth: -15, sanity: -20, progress: 3 },
+      options: [
+        { text: '假装什么都没发生', action: 'pretend_noticed', effects: { sanity: -5 }, risk: 'low' },
+        { text: '追上去喊他名字', action: 'rush_greet', effects: { stealth: -40, sanity: -15, progress: 10 }, risk: 'extreme', riskEvent: 'security_called' },
+        { text: '默默目送他离开', action: 'watch_leave', effects: { sanity: -10 }, risk: 'low' }
+      ]
+    },
+    {
+      id: 'phone_smashed',
+      name: '手机被砸',
+      description: '你举着手机拍他上车。他的保镖两步冲过来，一把打掉你的手机，屏幕摔得粉碎。"说了多少次了？"保镖的声音不大，但每个字都像钉子。',
+      trigger: { condition: 'progress >= 20 && stealth <= 50', weight: 55 },
+      forced: true,
+      effects: { stealth: -30, sanity: -20 },
+      options: [
+        { text: '捡起手机，默默离开', action: 'accept_smash', effects: { money: -1500, progress: -5 }, risk: 'medium' },
+        { text: '理论，说自己只是粉丝', action: 'argue_back', effects: { stealth: -30, sanity: -15 }, risk: 'high', riskEvent: 'police_involved' },
+        { text: '当场摔在地上大哭', action: 'fake_cry', effects: { sanity: -25, stealth: -10 }, risk: 'medium' }
+      ]
+    },
+    {
+      id: 'sasaeng_exclude',
+      name: '被其他私生排挤',
+      description: '登机口，几个熟面孔的私生饭聚在一起。她们看了你一眼，然后故意把登机牌晃了晃——那是同一班航班。她们知道你是谁，她们不喜欢你。',
+      trigger: { condition: 'progress >= 25', weight: 45 },
+      forced: true,
+      effects: { sanity: -15, stealth: -10 },
+      options: [
+        { text: '主动示好，交换情报', action: 'sasaeng_friend', effects: { money: -300, progress: 5 }, risk: 'medium' },
+        { text: '硬刚，不跟她们一起', action: 'sasaeng_alone', effects: { stealth: -5, sanity: -10 }, risk: 'low' },
+        { text: '直接不登这班机了', action: 'give_up_flight2', effects: { stamina: -10, progress: -3 }, risk: 'low' },
+        { text: '去向她们的管理员告状', action: 'sasaeng_report', effects: { stealth: -20, sanity: -10 }, risk: 'high' }
+      ]
+    },
+    {
+      id: 'dog_press',
+      name: '被狗仔拍到',
+      description: '长焦镜头在你身后轻轻一响。你回头——狗仔老周，你认识他，上个月他把林屿森在酒店的偷拍照卖了两万。他对你笑了笑，收起了相机。',
+      trigger: { condition: 'stealth <= 35', weight: 50 },
+      forced: true,
+      effects: { stealth: -40, sanity: -20 },
+      options: [
+        { text: '付钱封口，五千', action: 'pay_silencer', effects: { money: -5000 }, risk: 'extreme' },
+        { text: '谈判，三千，否则举报他', action: 'counter_blackmail', effects: { stealth: -20, sanity: -10 }, risk: 'high' },
+        { text: '装作不认识走开', action: 'ignore_狗仔', effects: { stealth: -15 }, risk: 'medium' },
+        { text: '直接抢他相机', action: 'grab_camera', effects: { stealth: -60, sanity: -15 }, risk: 'extreme', riskEvent: 'police_involved' }
+      ]
+    },
+    {
+      id: 'id_card_found',
+      name: '身份证暴露',
+      description: '安检的时候，你从口袋里掏身份证——掉出来一张写过字的名片。上面是你的笔迹："林屿森行程 3.15 北京"。安保低头看了一眼，然后叫来了同事。',
+      trigger: { condition: 'progress >= 15 && stealth <= 45', weight: 40 },
+      forced: true,
+      effects: { stealth: -50, sanity: -25 },
+      options: [
+        { text: '说是帮朋友查的', action: 'fake_explain', effects: { stealth: -10, sanity: -10 }, risk: 'high' },
+        { text: '认栽，删掉那张纸', action: 'accept_exposed', effects: { progress: -10 }, risk: 'medium' },
+        { text: '迅速撕掉塞嘴里', action: 'eat_paper', effects: { sanity: -15 }, risk: 'medium' }
+      ]
+    },
+    {
+      id: 'fake_staff',
+      name: '假扮工作人员',
+      description: '你花两百块从网上买了套假工作证，印着"林屿森工作室"。穿上马甲混进活动现场，安保扫了你一眼——然后低头看了看你胸前的工牌。',
+      trigger: { condition: 'progress >= 30', weight: 40 },
+      options: [
+        { text: '镇定，装作很忙的样子往里走', action: 'pretend_staff', effects: { stealth: -20, progress: 15 }, successRate: 0.45, failEffects: { stealth: -50, sanity: -20, progress: -5 }, risk: 'high' },
+        { text: '主动和安保打招呼套近乎', action: 'staff_friendly', effects: { stealth: -10, money: -200, progress: 8 }, risk: 'medium' },
+        { text: '算了，赶紧撤', action: 'staff_giveup', effects: { stealth: -15, sanity: -5 }, risk: 'low' }
+      ]
+    },
+    {
+      id: 'home_exposed',
+      name: '住址被曝光',
+      description: '粉圈群里突然转了一张截图——是你的社交媒体定位，显示你家的小区名字。下面有人评论："原来住这里啊。"你手抖着删掉了那条动态，但转发已经出去了。',
+      trigger: { condition: 'daysElapsed >= 10', weight: 35 },
+      forced: true,
+      effects: { stealth: -60, sanity: -30 },
+      options: [
+        { text: '换住处，彻底消失几天', action: 'change_location', effects: { money: -3000, stealth: +20 }, risk: 'high' },
+        { text: '装作没事，不回应', action: 'ignore_exposed', effects: { sanity: -20 }, risk: 'medium' },
+        { text: '注销所有社交账号', action: 'delete_accounts', effects: { stealth: +10, sanity: -15 }, risk: 'medium' }
+      ]
+    },
+    {
+      id: 'stolen_identity',
+      name: '身份被顶替',
+      description: '另一个私生饭用你的照片和名字注册了社交账号，冒充你去和狗仔交易。等你发现的时候，那个账号已经在粉圈里传遍了——所有人都在说你是个骗子。',
+      trigger: { condition: 'progress >= 40', weight: 30 },
+      forced: true,
+      effects: { stealth: -40, sanity: -20 },
+      options: [
+        { text: '发声明澄清，但没人信', action: 'declare_wrong', effects: { sanity: -15 }, risk: 'high' },
+        { text: '找到那个人当面对质', action: 'confront_thief', effects: { stealth: -20, sanity: -15 }, risk: 'extreme' },
+        { text: '不管了，专心追星', action: 'ignore_theft', effects: { sanity: -10 }, risk: 'low' }
+      ]
+    },
+    {
+      id: 'hotel_room_found',
+      name: '查到房间号',
+      description: '你在酒店大堂的前台系统里看到了林屿森的房间号——1802。你盯着那个数字，心跳加速。电梯就在十米外。',
+      trigger: { condition: 'progress >= 50 && stealth >= 30', weight: 35 },
+      forced: true,
+      effects: { sanity: -15 },
+      options: [
+        { text: '直接上十八楼', action: 'go_to_room', effects: { stealth: -70, sanity: -20, progress: 20 }, risk: 'extreme', riskEvent: 'police_involved' },
+        { text: '在附近开个房间蹲守', action: 'rent_nearby_room', effects: { money: -800, stealth: -10, progress: 8 }, risk: 'high' },
+        { text: '算了，太冒险了', action: 'give_up_room', effects: { sanity: -10, progress: -3 }, risk: 'low' }
+      ]
+    },
+    {
+      id: 'car_chase',
+      name: '保姆车竞速',
+      description: '林屿森的保姆车突然发动了。你跳上租来的车，猛踩油门跟上。两车在夜色里飙到一百八，前方有测速摄像头。他的车突然减速，你冲过去了。',
+      trigger: { condition: 'progress >= 35', weight: 40 },
+      options: [
+        { text: '继续追，跟到目的地', action: 'keep_chasing', effects: { money: -500, stamina: -20, stealth: -30, progress: 15 }, risk: 'extreme', riskEvent: 'police_involved' },
+        { text: '减速，找个地方停下来', action: 'slow_down', effects: { stamina: -10, stealth: -10 }, risk: 'medium' },
+        { text: '认了，被拍到超速就完了', action: 'give_up_chase', effects: { progress: 5, stealth: -5 }, risk: 'low' }
+      ]
+    },
+    {
+      id: 'fan_meet_crashed',
+      name: '见面会闯入',
+      description: '粉丝见面会的后台入口只有一个保安。你攥着假工作证排练了三天的借口：送工作人员的咖啡、给经纪人递资料、迷路了的新人——选哪个？',
+      trigger: { condition: 'progress >= 20', weight: 45 },
+      options: [
+        { text: '装作送咖啡的混进去', action: 'pose_coffee', effects: { money: -50, stealth: -25, progress: 12 }, successRate: 0.5, failEffects: { stealth: -45, sanity: -10 }, risk: 'high' },
+        { text: '亮假工作证硬闯', action: 'force_entry', effects: { stealth: -60, sanity: -15, progress: 8 }, risk: 'extreme', riskEvent: 'blacklist' },
+        { text: '在门口等，看能不能偶遇', action: 'wait_door', effects: { stamina: -20, stealth: -10, progress: 3 }, risk: 'low' }
+      ]
+    },
+    {
+      id: 'family_call',
+      name: '父母来电话',
+      description: '手机屏幕亮起"妈"。今天是你离开家的第二十三天。他们以为你在北京实习，每晚视频通话你已经编了二十三套不同的借口。',
+      trigger: { condition: 'daysElapsed >= 7', weight: 55 },
+      forced: true,
+      effects: { sanity: -10 },
+      options: [
+        { text: '接电话敷衍应付', action: 'fake_excuse2', effects: { sanity: -5, stealth: -5 }, risk: 'low' },
+        { text: '发微信说在忙，待会回', action: 'delay_response', effects: { sanity: -10 }, risk: 'low' },
+        { text: '直接挂掉', action: 'ignore_family2', effects: { sanity: -20 }, risk: 'medium' },
+        { text: '坦白：妈，我想回家', action: 'confess_home', effects: { sanity: +10, money: -1000 }, risk: 'medium' }
+      ]
+    },
+    {
+      id: 'neighbor_exposed',
+      name: '邻居发现了',
+      description: '对门的阿姨敲了敲你的门。"小姑娘，我家孩子说你天天半夜不睡觉，举着手机对着对面楼拍……"她的眼神里有一种你读不懂的意味。',
+      trigger: { condition: 'daysElapsed >= 14', weight: 35 },
+      forced: true,
+      effects: { stealth: -30, sanity: -15 },
+      options: [
+        { text: '说是实习公司在做调研', action: 'lie_neighbor', effects: { stealth: -10 }, risk: 'medium' },
+        { text: '装傻，说不懂她在说什么', action: 'play_dumb', effects: { stealth: -5 }, risk: 'low' },
+        { text: '第二天就搬家', action: 'move_away', effects: { money: -2000, stealth: +30 }, risk: 'high' }
+      ]
+    },
+    {
+      id: 'video_leaked',
+      name: '你的跟踪视频被曝光',
+      description: '有人在B站上传了一段视频：你蹲在林屿森酒店窗外的阳台上，被保安拽下来的画面。弹幕在刷"私生饭去死""变态"。播放量一小时破了十万。',
+      trigger: { condition: 'stealth <= 20', weight: 45 },
+      forced: true,
+      effects: { stealth: -80, sanity: -40 },
+      options: [
+        { text: '找律师维权（花钱）', action: 'lawyer_up', effects: { money: -10000, sanity: -10 }, risk: 'high' },
+        { text: '注销所有账号消失', action: 'disappear', effects: { stealth: +10, sanity: -30 }, risk: 'medium' },
+        { text: '买水军控评（烧钱）', action: 'buy_water', effects: { money: -5000, stealth: -20 }, risk: 'extreme' }
+      ]
+    },
+    {
+      id: 'rival_seller',
+      name: '情报被对家截胡',
+      description: '你花八百块买的情报，刚刚到货。但几乎同时，粉圈里有人放出了更低的价格——三百。你意识到，你们用的是同一个情报源，而他已经把情报卖给了所有人。',
+      trigger: { condition: 'progress >= 30', weight: 40 },
+      forced: true,
+      effects: { sanity: -15 },
+      options: [
+        { text: '找更贵的独家渠道', action: 'find_expensive', effects: { money: -2000, progress: 5 }, risk: 'high' },
+        { text: '低价转卖情报止损', action: 'resell_cheap', effects: { money: +200, stealth: -15 }, risk: 'medium' },
+        { text: '换个偶像追算了', action: 'give_up_idol', effects: { sanity: +10 }, risk: 'extreme' }
+      ]
+    }
+  ],
+
+  endgameEvents: [
+    {
+      id: 'final_photo',
+      name: '绝密照片到手',
+      description: '快门声在寂静中格外响亮。那张照片——足以毁掉一个人的那张——正躺在你的手机相册里。',
+      trigger: { condition: 'progress >= 100' },
+      forced: true,
+      options: []
+    }
+  ],
+
+  riskEvents: {
+    police_involved: {
+      name: '报警处理',
+      effects: { money: -3000, sanity: -30, stealth: -80, progress: -50 }
+    },
+    blacklist: {
+      name: '进入黑名单',
+      effects: { stealth: -100, progress: -30 }
+    },
+    security_called: {
+      name: '安保介入',
+      effects: { stealth: -50, sanity: -20, progress: -15 }
+    }
+  }
+};
+
+</script>
   <script src="data/endings.js"></script>
-  <script src="data/celebrities.js"></script>
+  <script>
+/**
+ * 私生模拟器 - 偶像配置（ MVP 单偶像版）
+ */
+
+window.CELEBRITY_POOL = [
+  {
+    id: 'default',
+    name: '林屿森',
+    alias: '森森',
+    gender: 'male',
+    type: '顶流男演员',
+    difficulty: 'hard',
+    riskProfile: {
+      security_level: '高',
+      privacy_level: '高',
+      staff_vigilance: '警觉',
+      media_exposure: '极高'
+    },
+    profile: {
+      age: 27,
+      height: '185cm',
+      base: '横店 / 北京',
+      schedule: '剧组拍戏 + 代言活动 + 粉丝见面会',
+      personality: '对私生饭极度反感，团队零容忍',
+      note: '顶流中的顶流，安保严密，曾有私生饭被起诉的先例'
+    },
+    specialTrait: '他会主动记住私生饭的脸并通知团队'
+  }
+];
+
+window.getRandomCelebrity = function() {
+  return window.CELEBRITY_POOL[0];
+};
+
+</script>
   
   <!-- 核心引擎 -->
-  <script src="js/game.js"></script>
-  <script src="js/api.js"></script>
+  <script>
+/**
+ * 私生模拟器 - 核心游戏引擎
+ * 管理状态机、事件触发、数值计算
+ */
+
+(function() {
+  'use strict';
+
+  // =============================================
+  // 游戏状态
+  // =============================================
+  
+  const GameState = {
+    // 元数据
+    id: null,
+    createdAt: null,
+    celebrity: null,
+    daysElapsed: 0,
+    currentPhase: 'playing', // 'playing' | 'god_view' | 'endgame' | 'ended'
+    
+    // 核心属性
+    attributes: {
+      stamina: 100,
+      money: 5000,
+      stealth: 100,
+      sanity: 100
+    },
+    
+    // 追踪进度
+    progress: 0,
+    
+    // 特殊状态
+    special: {
+      rentedApartment: false,
+      hasGPSDevice: false,
+      isBlacklisted: false,
+      hasSecretPhoto: false
+    },
+    
+    // 事件记录
+    eventHistory: [],
+    choiceHistory: [],
+    
+    // 终局选择
+    finalChoice: null,
+    
+    // 当前事件
+    currentEvent: null,
+    currentOptions: [],
+    
+    // 结算
+    isGameOver: false,
+    gameOverReason: null,
+    endingId: null,
+    
+    // 深渊模式（神之视角）
+    godViewMode: false,
+    daysInGodView: 0
+  };
+
+  // =============================================
+  // 事件选择器
+  // =============================================
+  
+  function selectNextEvent() {
+    const allEvents = [
+      ...window.EVENT_LIBRARY.coreEvents,
+      ...window.EVENT_LIBRARY.dailyEvents,
+      ...window.EVENT_LIBRARY.randomEvents
+    ];
+    
+    // 过滤可触发的事件
+    const available = allEvents.filter(e => {
+      // 检查冷却
+      if (e.trigger?.cooldown) {
+        const recentEvents = GameState.eventHistory.slice(-e.trigger.cooldown);
+        if (recentEvents.includes(e.id)) return false;
+      }
+      
+      // 检查一次性
+      if (e.trigger?.oneTime && GameState.eventHistory.includes(e.id)) return false;
+      
+      // 检查黑名单
+      if (GameState.special.isBlacklisted && !e.id.includes('warning')) {
+        return false;
+      }
+      
+      // 检查条件
+      if (e.trigger?.condition) {
+        return evaluateCondition(e.trigger.condition);
+      }
+      
+      return true;
+    });
+    
+    if (available.length === 0) {
+      return window.EVENT_LIBRARY.dailyEvents.find(e => e.id === 'rest_day') || null;
+    }
+    
+    // 加权随机选择
+    const totalWeight = available.reduce((sum, e) => sum + (e.trigger?.weight || 10), 0);
+    let random = Math.random() * totalWeight;
+    
+    for (const event of available) {
+      random -= (event.trigger?.weight || 10);
+      if (random <= 0) return event;
+    }
+    
+    return available[0];
+  }
+
+  // =============================================
+  // 条件求值器（简单的字符串表达式解析）
+  // =============================================
+  
+  function evaluateCondition(condition) {
+    try {
+      // 安全替换变量
+      const ctx = {
+        stamina: GameState.attributes.stamina,
+        money: GameState.attributes.money,
+        stealth: GameState.attributes.stealth,
+        sanity: GameState.attributes.sanity,
+        progress: GameState.progress,
+        daysElapsed: GameState.daysElapsed
+      };
+      
+      let expr = condition;
+      for (const [key, val] of Object.entries(ctx)) {
+        expr = expr.replace(new RegExp(`\\b${key}\\b`, 'g'), val);
+      }
+      
+      // 安全求值（只允许数值比较）
+      return Function('"use strict"; return (' + expr + ')')();
+    } catch (e) {
+      console.warn('条件求值失败:', condition, e);
+      return false;
+    }
+  }
+
+  // =============================================
+  // 事件处理
+  // =============================================
+  
+  function processEvent(event) {
+    if (!event) return null;
+    
+    // 检查强制事件
+    const isForced = event.forced || false;
+    
+    // 解析选项
+    let options = (event.options || []).map(opt => ({
+      id: opt.action,
+      text: opt.text,
+      effects: opt.effects || {},
+      successRate: opt.successRate,
+      successEffects: opt.successEffects,
+      failEffects: opt.failEffects,
+      permanent: opt.permanent,
+      riskEvent: opt.riskEvent
+    }));
+    
+    // 如果没有选项，添加默认"继续"
+    if (options.length === 0) {
+      options.push({
+        id: 'continue',
+        text: '继续',
+        effects: { stamina: -5 }
+      });
+    }
+    
+    return {
+      eventId: event.id,
+      eventName: event.name,
+      description: event.description,
+      forced: isForced,
+      effects: event.effects,
+      options: options,
+      narrative: event.description // 简化：直接用描述作为叙述文本
+    };
+  }
+
+  // =============================================
+  // 选项执行
+  // =============================================
+  
+  function executeChoice(option, eventId) {
+    const result = {
+      narrative: '',
+      changes: {},
+      options: [],
+      isGameOver: false,
+      isFinal: false,
+      endingType: null
+    };
+    
+    // 记录事件
+    GameState.eventHistory.push(eventId);
+    GameState.choiceHistory.push(option.id);
+    
+    // 处理成功率
+    if (option.successRate !== undefined) {
+      const roll = Math.random();
+      if (roll <= option.successRate) {
+        // 成功
+        Object.assign(GameState.attributes, option.successEffects || {});
+        result.changes = { ...option.successEffects };
+      } else {
+        // 失败
+        Object.assign(GameState.attributes, option.failEffects || {});
+        result.changes = { ...option.failEffects };
+      }
+    } else {
+      // 普通选项
+      Object.assign(GameState.attributes, option.effects || {});
+      result.changes = { ...option.effects };
+    }
+    
+    // 进度处理
+    if (option.effects?.progress) {
+      GameState.progress = Math.max(0, Math.min(100, GameState.progress + option.effects.progress));
+    }
+    if (option.successEffects?.progress) {
+      GameState.progress = Math.max(0, Math.min(100, GameState.progress + option.successEffects.progress));
+    }
+    
+    // 永久效果
+    if (option.permanent) {
+      Object.assign(GameState.special, option.permanent);
+      if (option.permanent.dailyProgress) {
+        GameState.special.dailyProgressBonus = option.permanent.dailyProgress;
+      }
+    }
+    
+    // 风险事件
+    if (option.riskEvent) {
+      const riskEvent = window.EVENT_LIBRARY.riskEvents[option.riskEvent];
+      if (riskEvent) {
+        Object.assign(GameState.attributes, riskEvent.effects);
+        if (riskEvent.immediateGameOver) {
+          GameState.isGameOver = true;
+          GameState.gameOverReason = riskEvent.name;
+        }
+      }
+    }
+    
+    // 每日结算
+    GameState.daysElapsed++;
+    applyDailyDrain();
+    
+    // 检查深渊模式触发
+    if (GameState.progress >= 100 && !GameState.godViewMode) {
+      return triggerEndgame(result);
+    }
+    
+    // 检查游戏结束
+    checkGameOver(result);
+    
+    // 生成下一个事件
+    if (!result.isGameOver) {
+      const nextEvent = selectNextEvent();
+      const processedEvent = processEvent(nextEvent);
+      GameState.currentEvent = processedEvent;
+      
+      result.narrative = processedEvent ? processedEvent.description : '又一天过去了……';
+      result.options = processedEvent ? processedEvent.options : [];
+    }
+    
+    return result;
+  }
+
+  // =============================================
+  // 每日结算
+  // =============================================
+  
+  function applyDailyDrain() {
+    const config = window.GAME_CONFIG.game;
+    
+    // 基础消耗
+    GameState.attributes.stamina = Math.max(0, 
+      GameState.attributes.stamina - config.dailyDrain.stamina);
+    GameState.attributes.money = Math.max(0, 
+      GameState.attributes.money - config.dailyDrain.money);
+    GameState.attributes.sanity = Math.max(0, 
+      GameState.attributes.sanity - config.dailyDrain.sanity);
+    
+    // 隐蔽度每日小幅随机波动
+    const stealthDelta = Math.floor(Math.random() * 11) - 5; // -5 到 +5
+    GameState.attributes.stealth = Math.max(0, Math.min(100, 
+      GameState.attributes.stealth + stealthDelta));
+    
+    // 租房子减免消耗
+    if (GameState.special.rentedApartment) {
+      GameState.attributes.money -= Math.floor(config.dailyDrain.money * 0.8);
+      // 每日进度加成
+      GameState.progress = Math.min(100, GameState.progress + (GameState.special.dailyProgressBonus || 0));
+    }
+    
+    // 深渊模式：理智上限衰减
+    if (GameState.progress >= config.sanityDecayThreshold * 100) {
+      config.maxAttributes.sanity = Math.max(20, config.maxAttributes.sanity - 2);
+      GameState.attributes.sanity = Math.min(GameState.attributes.sanity, config.maxAttributes.sanity);
+      GameState.godViewMode = true;
+      GameState.daysInGodView++;
+    }
+  }
+
+  // =============================================
+  // 终局触发
+  // =============================================
+  
+  function triggerEndgame(result) {
+    GameState.currentPhase = 'endgame';
+    
+    const endgameEvent = window.EVENT_LIBRARY.endgameEvents[0];
+    
+    result.narrative = `快门声在寂静中格外响亮。
+    
+那张照片——足以毁掉一个人的那张——正躺在你的手机相册里。
+    
+偶像的车灯消失在夜色中。他/她永远不会知道，刚才发生了什么。
+    
+但你知道。
+    
+现在，你要做什么？`;
+    
+    result.options = [
+      {
+        id: 'expose',
+        text: '发送/曝光',
+        effects: {},
+        description: '让全世界看到真相'
+      },
+      {
+        id: 'sell',
+        text: '卖掉照片',
+        effects: {},
+        description: '用它换一笔钱'
+      },
+      {
+        id: 'keep',
+        text: '保留，不发',
+        effects: {},
+        description: '你有底牌，但你选择不用'
+      }
+    ];
+    
+    result.isFinal = true;
+    result.changes = { progress: 0, sanity: -30 };
+    
+    GameState.attributes.sanity -= 30;
+    GameState.special.hasSecretPhoto = true;
+    
+    return result;
+  }
+
+  // =============================================
+  // 游戏结束检查
+  // =============================================
+  
+  function checkGameOver(result) {
+    const attrs = GameState.attributes;
+    
+    // 归零检查
+    if (attrs.stamina <= 0) {
+      return endGame('collapsed', result);
+    }
+    if (attrs.money <= 0) {
+      return endGame('bankrupt', result);
+    }
+    if (attrs.stealth <= 0) {
+      return endGame('exposed', result);
+    }
+    if (attrs.sanity <= 0) {
+      return endGame('insane', result);
+    }
+    
+    // 超时检查（偶像退圈）
+    if (GameState.daysElapsed >= 90 && GameState.progress < 50) {
+      return endGame('idol_quit', result);
+    }
+    
+    return null;
+  }
+
+  // =============================================
+  // 结束游戏
+  // =============================================
+  
+  function endGame(endingId, result) {
+    GameState.isGameOver = true;
+    GameState.endingId = endingId;
+    GameState.currentPhase = 'ended';
+    
+    const ending = [
+      ...(window.ENDINGS.badEndings || []),
+      ...(window.ENDINGS.neutralEndings || []),
+      ...(window.ENDINGS.goodEndings || [])
+    ].find(e => e.id === endingId);
+    
+    if (ending) {
+      let narrative = ending.narrative;
+      // 替换动态变量
+      narrative = narrative.replace(/\{days\}/g, GameState.daysElapsed);
+      
+      result.narrative = `【${ending.title}】
+
+${narrative}
+
+${ending.afterword || ''}`;
+      
+      result.endingType = endingId;
+    } else {
+      result.narrative = '游戏结束。';
+    }
+    
+    result.isGameOver = true;
+    result.options = [
+      {
+        id: 'restart',
+        text: '重新开始',
+        effects: {},
+        description: '再来一局'
+      }
+    ];
+    
+    return result;
+  }
+
+  // =============================================
+  // 终局选择处理
+  // =============================================
+  
+  function executeFinalChoice(choiceId) {
+    const result = {
+      narrative: '',
+      changes: {},
+      options: [],
+      isGameOver: true,
+      isFinal: true,
+      endingType: choiceId
+    };
+    
+    GameState.finalChoice = choiceId;
+    
+    let ending;
+    if (choiceId === 'expose') {
+      ending = window.ENDINGS.finalEndings.find(e => e.id === 'destruction');
+    } else if (choiceId === 'sell') {
+      ending = window.ENDINGS.finalEndings.find(e => e.id === 'blackmail');
+    } else if (choiceId === 'keep') {
+      ending = window.ENDINGS.finalEndings.find(e => e.id === 'god_view');
+      GameState.godViewMode = true;
+      GameState.currentPhase = 'god_view';
+    }
+    
+    if (ending) {
+      result.narrative = `【${ending.title}】
+
+${ending.narrative}
+
+${ending.afterword || ''}`;
+      result.endingType = ending.id;
+    }
+    
+    result.options = [
+      {
+        id: 'restart',
+        text: '重新开始',
+        effects: {},
+        description: '再来一局'
+      }
+    ];
+    
+    return result;
+  }
+
+  // =============================================
+  // 游戏初始化
+  // =============================================
+  
+  function initGame() {
+    const config = window.GAME_CONFIG.game;
+    const celebrity = window.getRandomCelebrity();
+    
+    // 重置状态
+    Object.assign(GameState, {
+      id: Date.now().toString(36),
+      createdAt: new Date().toISOString(),
+      celebrity: celebrity,
+      daysElapsed: 0,
+      currentPhase: 'playing',
+      attributes: { ...config.initialAttributes },
+      progress: config.initialProgress,
+      special: {
+        rentedApartment: false,
+        hasGPSDevice: false,
+        isBlacklisted: false,
+        hasSecretPhoto: false
+      },
+      eventHistory: [],
+      choiceHistory: [],
+      finalChoice: null,
+      isGameOver: false,
+      gameOverReason: null,
+      endingId: null,
+      godViewMode: false,
+      daysInGodView: 0
+    });
+    
+    // 第一个事件
+    const firstEvent = selectNextEvent();
+    const processedEvent = processEvent(firstEvent);
+    GameState.currentEvent = processedEvent;
+    
+    return {
+      status: 'ready',
+      celebrity: {
+        name: celebrity.name,
+        alias: celebrity.alias,
+        type: celebrity.type,
+        difficulty: celebrity.difficulty
+      },
+      attributes: GameState.attributes,
+      progress: GameState.progress,
+      event: processedEvent,
+      daysElapsed: GameState.daysElapsed
+    };
+  }
+
+  // =============================================
+  // 获取当前状态（用于 UI 更新）
+  // =============================================
+  
+  function getCurrentState() {
+    return {
+      attributes: { ...GameState.attributes },
+      progress: GameState.progress,
+      currentEvent: GameState.currentEvent,
+      daysElapsed: GameState.daysElapsed,
+      isGameOver: GameState.isGameOver,
+      isFinal: GameState.currentPhase === 'endgame',
+      godViewMode: GameState.godViewMode,
+      special: { ...GameState.special }
+    };
+  }
+
+  // =============================================
+  // 导出 API
+  // =============================================
+  
+  window.SasaengSimulator = {
+    init: initGame,
+    getState: getCurrentState,
+    executeChoice: executeChoice,
+    executeFinalChoice: executeFinalChoice,
+    evaluateCondition: evaluateCondition
+  };
+
+})();
+
+</script>
+  <script>
+/**
+ * 私生模拟器 - OpenClaw API 集成
+ * 处理与大语言模型后端的通信
+ */
+
+(function() {
+  'use strict';
+
+  // =============================================
+  // API 配置
+  // =============================================
+  
+  const config = () => window.GAME_CONFIG.api;
+  
+  // =============================================
+  // 状态历史（用于上下文管理）
+  // =============================================
+  
+  const conversationHistory = [];
+
+  // =============================================
+  // 构建 System Prompt
+  // =============================================
+  
+  function buildSystemPrompt(celebrity, gameState) {
+    const difficultyLabel = {
+      extreme: '炼狱',
+      hard: '困难',
+      medium: '普通',
+      easy: '简单'
+    };
+
+    return `【私生模拟器 - 游戏引擎】
+
+你是"私生模拟器"游戏的叙事引擎。玩家扮演一个极端狂热的私生饭，追踪偶像 ${celebrity.name}（${celebrity.alias}，${celebrity.type}）。
+
+## 当前游戏状态
+- 偶像：${celebrity.name} | 难度：${difficultyLabel[celebrity.difficulty]} | 追踪进度：${gameState.progress}%
+- 体力：${gameState.attributes.stamina}/100
+- 资金：¥${gameState.attributes.money}
+- 隐蔽度：${gameState.attributes.stealth}/100
+- 理智：${gameState.attributes.sanity}/100
+- 已追踪天数：${gameState.daysElapsed}天
+
+## 游戏阶段
+${gameState.currentPhase === 'endgame' ? '【终局阶段】玩家已获得绝密照片，即将做出最终抉择' : '【正常游戏】资源管理与风险决策'}
+
+${gameState.godViewMode ? '【深渊模式】玩家进入了"神之视角"状态，理智上限正在持续衰减' : ''}
+
+## 叙事风格要求
+- 语言：简体中文，第一人称视角
+- 语气：压抑、紧张、黑色幽默
+- 细节：注重感官描写（天气、声音、气味）
+- 节奏：每个叙事块不超过100字，制造悬念
+- 禁止：直接描写暴力/色情内容
+
+## 数值规则（严格遵守）
+- 玩家资金低于¥2000时：必须显示"经济危机"相关叙事
+- 隐蔽度低于30时：必须触发安保发现风险
+- 理智低于30时：必须触发心理崩溃相关叙事
+- 追踪进度每+10%，叙述紧张感提升一个等级
+
+## 输出格式（严格遵守，仅输出JSON）
+{
+  "narrative": "叙事文本，描述当前场景的细节（100-200字）",
+  "mood": "当前氛围关键词（2-3个）",
+  "changes": {
+    "stamina": 数值变化（含正负符号，如 -10 或 +5）,
+    "money": 数值变化,
+    "stealth": 数值变化,
+    "sanity": 数值变化,
+    "progress": 数值变化
+  },
+  "options": [
+    {
+      "id": "选项ID（英文）",
+      "text": "选项文字（玩家看到的选择）",
+      "risk": "low/medium/high/extreme",
+      "description": "风险提示"
+    }
+  ],
+  "isGameOver": false,
+  "isFinal": false,
+  "endingType": null
+}
+
+## 核心事件参考
+1. 机票失败 - 高资金消耗
+2. VIP通道走空 - 纯负面事件
+3. GPS追踪器 - 高风险高回报
+4. 地库蹲守 - 进度倒退风险
+5. 手机被删 - 隐蔽度大幅下降
+6. 相机被格式化 - 毁灭性打击
+7. 翻垃圾桶 - 理智换进度
+8. 租对面楼 - 巨额资金换长期优势
+
+请根据当前状态，选择最合适的下一个事件，生成符合叙事的JSON输出。`;
+  }
+
+  // =============================================
+  // 构建用户消息
+  // =============================================
+  
+  function buildUserMessage(action, currentState, eventDescription) {
+    const actionLabels = {
+      'buy_ticket_black': '买黄牛票硬闯',
+      'give_up_flight': '放弃航班',
+      'buy_economy': '买经济舱跟随',
+      'rest_hotel': '回酒店休息',
+      'install_gps': '安装GPS定位器',
+      'chase_wrong_car': '追错车',
+      'resist_deletion': '反抗保护手机',
+      'pretend_innocent': '假装路人粉',
+      'decrypt_trash': '翻垃圾桶解密',
+      'rent_apartment': '租对面楼的房子',
+      'accept_loss': '认栽',
+      'confront_informant': '找情报贩子算账',
+      'watch_drama': '吃瓜看戏',
+      'fan_war_attack': '下场对骂',
+      'rest_day': '休整一天',
+      'continue': '继续行动'
+    };
+
+    return `玩家选择了：${actionLabels[action] || action}
+
+当前状态：
+- 体力：${currentState.attributes.stamina}/100
+- 资金：¥${currentState.attributes.money}
+- 隐蔽度：${currentState.attributes.stealth}/100
+- 理智：${currentState.attributes.sanity}/100
+- 进度：${currentState.progress}%
+
+请生成这个选择的结果叙事和下一个可选事件。`;
+  }
+
+  // =============================================
+  // 调用 OpenClaw API
+  // =============================================
+  
+  async function callOpenClaw(messages, temperature = 0.8) {
+    const cfg = config();
+    
+    try {
+      const response = await fetch(`${cfg.baseUrl}${cfg.endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cfg.apiKey}`
+        },
+        body: JSON.stringify({
+          model: cfg.model,
+          messages: messages,
+          temperature: temperature,
+          max_tokens: 800
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API 请求失败: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('API 调用失败:', error);
+      throw error;
+    }
+  }
+
+  // =============================================
+  // 解析 LLM 返回的 JSON
+  // =============================================
+  
+  function parseLLMResponse(text) {
+    try {
+      // 尝试提取 JSON 块
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        return JSON.parse(jsonMatch[0]);
+      }
+      throw new Error('无法解析 JSON');
+    } catch (error) {
+      console.warn('JSON 解析失败，尝试修复:', error);
+      // 回退到本地处理
+      return null;
+    }
+  }
+
+  // =============================================
+  // 主游戏循环（与 LLM 交互）
+  // =============================================
+  
+  async function playWithLLM(action, gameState, celebrity) {
+    const systemPrompt = buildSystemPrompt(celebrity, gameState);
+    
+    // 构建消息历史
+    const messages = [
+      { role: 'system', content: systemPrompt }
+    ];
+    
+    // 添加历史
+    conversationHistory.forEach(msg => {
+      messages.push(msg);
+    });
+    
+    // 添加当前行动
+    const userMessage = buildUserMessage(action, gameState, gameState.currentEvent?.description);
+    messages.push({ role: 'user', content: userMessage });
+    
+    // 调用 API
+    let response;
+    try {
+      response = await callOpenClaw(messages);
+    } catch (error) {
+      // API 失败时回退到本地引擎
+      console.warn('LLM 不可用，回退到本地引擎');
+      return null;
+    }
+    
+    // 解析响应
+    const content = response.choices?.[0]?.message?.content;
+    if (!content) {
+      console.warn('API 返回内容为空');
+      return null;
+    }
+    
+    // 保存到历史
+    conversationHistory.push({ role: 'user', content: userMessage });
+    conversationHistory.push({ role: 'assistant', content: content });
+    
+    // 限制历史长度
+    if (conversationHistory.length > 20) {
+      conversationHistory.splice(0, 4);
+    }
+    
+    return parseLLMResponse(content);
+  }
+
+  // =============================================
+  // 模式选择：本地引擎 vs LLM 增强
+  // =============================================
+  
+  async function processAction(action) {
+    const gameState = window.SasaengSimulator.getState();
+    
+    // 优先尝试 LLM
+    if (window.GAME_CONFIG.api.apiKey && window.GAME_CONFIG.api.apiKey !== 'YOUR_OPENCLAW_API_KEY') {
+      try {
+        const llmResult = await playWithLLM(action, gameState, GameState.celebrity);
+        if (llmResult) {
+          return llmResult;
+        }
+      } catch (e) {
+        console.warn('LLM 模式失败:', e);
+      }
+    }
+    
+    // 回退到本地引擎
+    return window.SasaengSimulator.executeChoice({ id: action }, gameState.currentEvent?.eventId);
+  }
+
+  // =============================================
+  // 重置对话历史
+  // =============================================
+  
+  function resetConversation() {
+    conversationHistory.length = 0;
+  }
+
+  // =============================================
+  // 导出 API
+  // =============================================
+  
+  window.GameAPI = {
+    processAction: processAction,
+    resetConversation: resetConversation,
+    buildSystemPrompt: buildSystemPrompt
+  };
+
+})();
+
+</script>
 </head>
 <body>
   <div class="game-container" id="gameContainer">
