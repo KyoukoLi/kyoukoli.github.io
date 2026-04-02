@@ -1,0 +1,559 @@
+/**
+ * 私生模拟器 - 暗色调 UI
+ * 心理惊悚 + 高对比度 + 低饱和度
+ */
+
+:root {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-card: #1a1a1a;
+  --bg-hover: #252525;
+  
+  --text-primary: #e0e0e0;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+  
+  --accent-red: #c0392b;
+  --accent-orange: #d35400;
+  --accent-yellow: #f39c12;
+  --accent-green: #27ae60;
+  --accent-blue: #2980b9;
+  --accent-purple: #8e44ad;
+  
+  --border-color: #2a2a2a;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  
+  --font-main: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'SF Mono', 'Consolas', monospace;
+  
+  --radius: 4px;
+  --transition: 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* 背景纹理 */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at top left, rgba(30, 30, 30, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(20, 20, 20, 0.5) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* 主容器 */
+.game-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 标题区域 */
+.game-header {
+  text-align: center;
+  padding: 30px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.game-title {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 8px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.game-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 4px;
+}
+
+/* 偶像信息卡 */
+.celebrity-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.celebrity-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.celebrity-name {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.celebrity-type {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.difficulty-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.difficulty-extreme { background: var(--accent-red); color: white; }
+.difficulty-hard { background: var(--accent-orange); color: white; }
+.difficulty-medium { background: var(--accent-yellow); color: #000; }
+.difficulty-easy { background: var(--accent-green); color: white; }
+
+/* 属性面板 */
+.attributes-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.attribute-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 15px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.attribute-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transition: var(--transition);
+}
+
+.attribute-card.stamina::before { background: var(--accent-green); }
+.attribute-card.money::before { background: var(--accent-yellow); }
+.attribute-card.stealth::before { background: var(--accent-purple); }
+.attribute-card.sanity::before { background: var(--accent-red); }
+
+.attribute-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.attribute-value {
+  font-size: 24px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.attribute-value.low { color: var(--accent-red); }
+.attribute-value.medium { color: var(--accent-orange); }
+.attribute-value.high { color: var(--accent-green); }
+
+.attribute-bar {
+  height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.attribute-bar-fill {
+  height: 100%;
+  transition: var(--transition);
+  border-radius: 2px;
+}
+
+.stamina .attribute-bar-fill { background: var(--accent-green); }
+.money .attribute-bar-fill { background: var(--accent-yellow); }
+.stealth .attribute-bar-fill { background: var(--accent-purple); }
+.sanity .attribute-bar-fill { background: var(--accent-red); }
+
+/* 进度面板 */
+.progress-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.progress-value {
+  font-size: 18px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.progress-bar {
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-red), var(--accent-orange));
+  transition: width 0.5s ease;
+  border-radius: 4px;
+}
+
+.progress-stage {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* 叙事区域 */
+.narrative-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 25px;
+  margin-bottom: 20px;
+  min-height: 200px;
+  position: relative;
+}
+
+.narrative-text {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.narrative-text::first-letter {
+  font-size: 1.5em;
+  font-weight: 500;
+  float: left;
+  margin-right: 8px;
+  line-height: 1;
+}
+
+.event-name {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+}
+
+.mood-tags {
+  margin-top: 15px;
+  display: flex;
+  gap: 8px;
+}
+
+.mood-tag {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+/* 选项区域 */
+.options-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.option-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 14px;
+}
+
+.option-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent-orange);
+  transform: translateX(5px);
+}
+
+.option-btn:active {
+  transform: translateX(5px) scale(0.98);
+}
+
+.option-text {
+  flex: 1;
+}
+
+.option-risk {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-left: 15px;
+}
+
+.risk-low { background: rgba(39, 174, 96, 0.2); color: var(--accent-green); }
+.risk-medium { background: rgba(243, 156, 18, 0.2); color: var(--accent-yellow); }
+.risk-high { background: rgba(211, 84, 0, 0.2); color: var(--accent-orange); }
+.risk-extreme { background: rgba(192, 57, 43, 0.2); color: var(--accent-red); }
+
+/* 状态变化提示 */
+.changes-panel {
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  padding: 15px;
+  margin-bottom: 20px;
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.changes-panel.show {
+  display: block;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.change-item {
+  display: inline-block;
+  margin-right: 15px;
+  padding: 4px 10px;
+  border-radius: var(--radius);
+}
+
+.change-positive { background: rgba(39, 174, 96, 0.15); color: var(--accent-green); }
+.change-negative { background: rgba(192, 57, 43, 0.15); color: var(--accent-red); }
+
+/* 游戏结束界面 */
+.game-over-panel {
+  text-align: center;
+  padding: 50px 20px;
+}
+
+.game-over-title {
+  font-size: 24px;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+  color: var(--accent-red);
+}
+
+.game-over-narrative {
+  font-size: 14px;
+  line-height: 2;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 30px;
+}
+
+.restart-btn {
+  background: var(--accent-red);
+  border: none;
+  color: white;
+  padding: 15px 40px;
+  font-size: 14px;
+  letter-spacing: 4px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  font-family: var(--font-main);
+}
+
+.restart-btn:hover {
+  background: #a93226;
+  transform: scale(1.05);
+}
+
+/* 开始界面 */
+.start-panel {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.start-title {
+  font-size: 32px;
+  letter-spacing: 6px;
+  margin-bottom: 15px;
+}
+
+.start-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.start-btn {
+  background: var(--accent-red);
+  border: none;
+  color: white;
+  padding: 18px 60px;
+  font-size: 16px;
+  letter-spacing: 6px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  font-family: var(--font-main);
+  margin-bottom: 30px;
+}
+
+.start-btn:hover {
+  background: #a93226;
+  transform: scale(1.05);
+}
+
+.warning-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* 底部状态栏 */
+.status-bar {
+  margin-top: auto;
+  padding: 15px 0;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* 加载动画 */
+.loading {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-muted);
+}
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--accent-red);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 深渊模式特效 */
+.god-view-mode .narrative-panel {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 30px rgba(142, 68, 173, 0.2);
+}
+
+.god-view-mode .progress-bar-fill {
+  background: linear-gradient(90deg, var(--accent-purple), var(--accent-red));
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .attributes-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .game-title {
+    font-size: 22px;
+    letter-spacing: 4px;
+  }
+  
+  .celebrity-card {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

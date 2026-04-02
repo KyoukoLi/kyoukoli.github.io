@@ -1,0 +1,386 @@
+/**
+ * 私生模拟器 - 事件库
+ * 包含所有可触发的场景事件及数值变动
+ */
+
+window.EVENT_LIBRARY = {
+  
+  // =============================================
+  // 核心事件（来自 PRD 的 8 个场景）
+  // =============================================
+  
+  coreEvents: [
+    
+    {
+      id: 'flight_failed',
+      name: '卡机票失败',
+      description: '试图混入同航班，被安保拦截',
+      trigger: {
+        condition: 'progress >= 5',
+        weight: 15,
+        cooldown: 3 // 冷却3回合后才能再次触发
+      },
+      options: [
+        {
+          text: '买黄牛票硬闯',
+          action: 'buy_ticket_black',
+          effects: { money: -2000, stamina: -10, progress: 8 },
+          successRate: 0.4,
+          failEffects: { stealth: -30, sanity: -5 }
+        },
+        {
+          text: '放弃，另寻机会',
+          action: 'give_up_flight',
+          effects: { stamina: -15, progress: -3, sanity: -5 }
+        },
+        {
+          text: '买经济舱跟着',
+          action: 'buy_economy',
+          effects: { money: -1500, stamina: -5, progress: 5 },
+          stealth: -10
+        }
+      ]
+    },
+
+    {
+      id: 'vip_pass_empty',
+      name: 'VIP通道走空',
+      description: '在机场苦等3小时，偶像走了特殊通道',
+      trigger: {
+        condition: 'progress >= 10',
+        weight: 20,
+        cooldown: 2
+      },
+      options: [
+        {
+          text: '认栽回酒店休息',
+          action: 'rest_hotel',
+          effects: { stamina: +20, money: -200, sanity: -10 }
+        },
+        {
+          text: '打探特殊通道位置',
+          action: 'research_vip_route',
+          effects: { money: -300, stealth: -5 },
+          progress: 3
+        }
+      ],
+      forced: true // 必须选择一项
+    },
+
+    {
+      id: 'gps_tracker',
+      name: '装车底定位器',
+      description: '高危操作——潜入停车场，在保姆车底安装GPS',
+      trigger: {
+        condition: 'progress >= 20 && stealth >= 50',
+        weight: 10,
+        cooldown: 5,
+        requireSpecialItem: 'gps_device' // 需要先购买装备
+      },
+      options: [
+        {
+          text: '立即安装',
+          action: 'install_gps',
+          effects: { money: -500, stealth: -40 },
+          successRate: 0.55,
+          successEffects: { progress: 25 },
+          failEffects: { stealth: -50, sanity: -15 }
+        },
+        {
+          text: '先观察安保情况',
+          action: 'observe_security',
+          effects: { stamina: -10, stealth: -5 },
+          successRate: 0.7,
+          successEffects: { progress: 5 },
+          failEffects: { progress: -5 }
+        }
+      ]
+    },
+
+    {
+      id: 'underground_bait',
+      name: '地库蹲守分身术',
+      description: '发现偶像分两辆车离开，你赌错了哪辆是真的',
+      trigger: {
+        condition: 'progress >= 30',
+        weight: 18,
+        cooldown: 3
+      },
+      options: [
+        {
+          text: '猛踩油门追另一辆',
+          action: 'chase_wrong_car',
+          effects: { money: -300, stamina: -20, stealth: -20, progress: -10, sanity: -15 }
+        },
+        {
+          text: '冷静分析路线',
+          action: 'analyze_route',
+          effects: { stamina: -10, sanity: -5 },
+          successRate: 0.5,
+          successEffects: { progress: 8 },
+          failEffects: { progress: -5 }
+        }
+      ]
+    },
+
+    {
+      id: 'phone_deleted',
+      name: '近距离手机被删',
+      description: '近距离拍摄时被偶像身边的助理发现，手机被强制检查并删除照片',
+      trigger: {
+        condition: 'progress >= 40',
+        weight: 22,
+        cooldown: 2
+      },
+      options: [
+        {
+          text: '配合删照片，假装路人粉',
+          action: 'pretend_innocent',
+          effects: { stealth: -35, sanity: -10, progress: -15 }
+        },
+        {
+          text: '反抗，保护手机',
+          action: 'resist_deletion',
+          effects: { stealth: -60, money: -2000, sanity: -20, progress: -20 },
+          // 激烈反抗可能导致设备损坏或被报警
+          riskEvent: 'police_involved'
+        },
+        {
+          text: '跪地求饶装可怜',
+          action: 'fake_surrender',
+          effects: { sanity: -25, stealth: -10 },
+          successRate: 0.6,
+          successEffects: { progress: 5 },
+          failEffects: { stealth: -40, progress: -10 }
+        }
+      ]
+    },
+
+    {
+      id: 'camera_wiped',
+      name: 'Staff格式化相机',
+      description: '偷拍被发现，相机被没收并格式化',
+      trigger: {
+        condition: 'progress >= 25 && stealth <= 40',
+        weight: 25,
+        cooldown: 4,
+        autoTrigger: true // 隐蔽度过低时自动触发
+      },
+      forced: true,
+      options: [
+        {
+          text: '跪求放过',
+          action: 'beg_forgiveness',
+          effects: { sanity: -30, money: -1000, stealth: -15, progress: -30 }
+        },
+        {
+          text: '硬刚，威胁报警',
+          action: 'threaten_police',
+          effects: { stealth: -50, sanity: -20, money: -3000, progress: -40 },
+          riskEvent: 'blacklist'
+        }
+      ]
+    },
+
+    {
+      id: 'trash_treasure',
+      name: '翻垃圾桶获门牌',
+      description: '在酒店后巷翻垃圾桶，发现了被撕碎的快递单',
+      trigger: {
+        condition: 'true', // 任意进度都可能触发
+        weight: 30,
+        cooldown: 2
+      },
+      options: [
+        {
+          text: '拼凑碎片获取地址',
+          action: 'decrypt_trash',
+          effects: { sanity: -15, stealth: -5 },
+          successRate: 0.65,
+          successEffects: { progress: 20, stealth: +10 },
+          failEffects: { sanity: -10, progress: 5 }
+        },
+        {
+          text: '太恶心了，放弃',
+          action: 'abandon_trash',
+          effects: { sanity: -5 }
+        }
+      ]
+    },
+
+    {
+      id: 'rent_building',
+      name: '租对面楼的房子',
+      description: '斥巨资在对面的老小区租下窗户正对偶像住处的房间',
+      trigger: {
+        condition: 'progress >= 35 && money >= 8000',
+        weight: 8,
+        cooldown: 10,
+        oneTime: true // 只能触发一次
+      },
+      forced: true,
+      options: [
+        {
+          text: '租下！（月租 ¥4500）',
+          action: 'rent_apartment',
+          effects: { money: -4500, stealth: +30, sanity: +15 },
+          permanent: {
+            dailyProgress: 3, // 每日自动增加进度
+            dailyCostReduction: 0.8, // 日常消耗打8折
+            rentDue: 30 // 30天后需续租
+          }
+        },
+        {
+          text: '太冒险了，再想想',
+          action: 'defer_rent',
+          effects: { sanity: -5 }
+        }
+      ]
+    }
+  ],
+
+  // =============================================
+  // 日常事件（低风险，高频次）
+  // =============================================
+  
+  dailyEvents: [
+    {
+      id: 'idol_gossip',
+      name: '刷到偶像绯闻',
+      description: '热搜突然出现偶像的绯闻八卦，吃瓜群众议论纷纷',
+      trigger: { condition: 'true', weight: 40 },
+      effects: { sanity: -10, stealth: +5 },
+      options: [
+        { text: '吃瓜看戏', action: 'watch_drama', effects: { sanity: -5 } },
+        { text: '控评保护偶像', action: 'protect_idol', effects: { stamina: -15, sanity: +10 } }
+      ]
+    },
+    {
+      id: 'fan_war',
+      name: '粉圈骂战',
+      description: '对家粉丝在超话攻击你的偶像',
+      trigger: { condition: 'true', weight: 35 },
+      effects: { sanity: -15 },
+      options: [
+        { text: '下场对骂', action: 'fan_war_attack', effects: { sanity: -20, stamina: -10 } },
+        { text: '冷静举报', action: 'fan_war_report', effects: { stamina: -5, stealth: -5 } },
+        { text: '退出不看', action: 'fan_war_ignore', effects: { sanity: +5 } }
+      ]
+    },
+    {
+      id: 'false_alarm',
+      name: '假情报',
+      description: '你花 ¥800 买的"偶像今日行踪"是假的',
+      trigger: { condition: 'progress >= 15', weight: 30 },
+      effects: { money: -800, sanity: -10 },
+      options: [
+        { text: '认栽', action: 'accept_loss', effects: { sanity: -5 } },
+        { text: '找情报贩子算账', action: 'confront_informant', effects: { stealth: -15, sanity: -10 } }
+      ]
+    },
+    {
+      id: 'rest_day',
+      name: '休整日',
+      description: '连续多日奔波后，你决定休息一天',
+      trigger: { condition: 'stamina <= 30', weight: 50 },
+      effects: { stamina: +30, sanity: +5, money: -100 },
+      options: []
+    }
+  ],
+
+  // =============================================
+  // 随机突发事件（高风险，低频次）
+  // =============================================
+  
+  randomEvents: [
+    {
+      id: 'idol_noticed',
+      name: '偶像直视了你',
+      description: '在人群中，偶像的目光与你对上了——他/她皱了皱眉',
+      trigger: { condition: 'stealth <= 30', weight: 60 },
+      forced: true,
+      effects: { stealth: -20, sanity: -20, progress: 5 },
+      options: [
+        { text: '假装什么都没发生', action: 'pretend_noticed', effects: { sanity: -10 } },
+        { text: '冲上去打招呼', action: 'rush_greet', effects: { stealth: -40, sanity: -15, progress: 15 }, riskEvent: 'security_called' }
+      ]
+    },
+    {
+      id: 'media_exposure',
+      name: '被媒体拍到',
+      description: '一个狗仔队记者把相机对准了你——你是明天的娱乐版头条',
+      trigger: { condition: 'stealth <= 20', weight: 70 },
+      forced: true,
+      effects: { stealth: -60, sanity: -25, money: -5000 }, // 封口费
+      options: [
+        { text: '付钱封口', action: 'pay_silencer', effects: { money: -5000 } },
+        { text: '威胁曝光对方偷拍', action: 'counter_threaten', effects: { stealth: -30, sanity: -15 } }
+      ]
+    },
+    {
+      id: 'fan_recognition',
+      name: '被其他私生饭认出',
+      description: '"哟，你也追他啊？"——另一个私生饭认出了你',
+      trigger: { condition: 'progress >= 30', weight: 45 },
+      effects: { stealth: -10, sanity: -5 },
+      options: [
+        { text: '假装是路人', action: 'fake_bystander', effects: { stealth: -10 } },
+        { text: '结成联盟共享情报', action: 'form_alliance', effects: { money: -500, progress: 8 } }
+      ]
+    },
+    {
+      id: 'family_visit',
+      name: '父母来电话',
+      description: '家里来电话催你回家，问你整天在干什么',
+      trigger: { condition: 'days_elapsed >= 7', weight: 40 },
+      forced: true,
+      effects: { sanity: -15 },
+      options: [
+        { text: '敷衍应付', action: 'fake_excuse', effects: { sanity: -5, stealth: -5 } },
+        { text: '完全不理', action: 'ignore_family', effects: { sanity: -20 } },
+        { text: '坦白（断生活费风险）', action: 'confess', effects: { sanity: +10, money: -2000 } }
+      ]
+    }
+  ],
+
+  // =============================================
+  // 终局事件（进度达到100%时触发）
+  // =============================================
+  
+  endgameEvents: [
+    {
+      id: 'final_photo',
+      name: '绝密照片到手',
+      description: '你拍到了——足以毁掉偶像职业生涯的那一刻。快门声在寂静中格外响亮。',
+      trigger: { condition: 'progress >= 100' },
+      forced: true,
+      effects: { progress: 0 }, // 进度归零，进入终局模式
+      options: []
+    }
+  ],
+
+  // =============================================
+  // 风险事件（选项的附带后果）
+  // =============================================
+  
+  riskEvents: {
+    police_involved: {
+      name: '报警处理',
+      description: '冲突升级，偶像方选择了报警',
+      effects: { money: -3000, sanity: -30, stealth: -80, progress: -50 },
+      immediateGameOver: false
+    },
+    blacklist: {
+      name: '进入黑名单',
+      description: '你被偶像工作室列入黑名单，所有近距离接触机会永久关闭',
+      effects: { stealth: -100, progress: -30 },
+      immediateGameOver: false
+    },
+    security_called: {
+      name: '安保介入',
+      description: '安保人员将你请出了活动现场',
+      effects: { stealth: -50, sanity: -20, progress: -15 },
+      immediateGameOver: false
+    }
+  }
+};

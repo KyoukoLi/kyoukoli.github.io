@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>私生模拟器 | Sasaeng Simulator</title>
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- 数据文件 -->
+  <script src="data/config.js"></script>
+  <script src="data/events.js"></script>
+  <script src="data/endings.js"></script>
+  <script src="data/celebrities.js"></script>
+  
+  <!-- 核心引擎 -->
+  <script src="js/game.js"></script>
+  <script src="js/api.js"></script>
+</head>
+<body>
+  <div class="game-container" id="gameContainer">
+    
+    <!-- 开始界面 -->
+    <div id="startPanel" class="start-panel">
+      <h1 class="start-title">私生模拟器</h1>
+      <p class="start-desc">
+        扮演一个极端狂热的私生饭，体验追踪偶像的疯狂与代价。<br>
+        在资源耗尽之前，你需要做出选择。
+      </p>
+      <button class="start-btn" onclick="startGame()">开始追踪</button>
+      <p class="warning-text">本游戏纯属虚构，旨在探讨极端追星行为的危害</p>
+    </div>
+    
+    <!-- 游戏主界面 -->
+    <div id="gamePanel" style="display: none;">
+      
+      <!-- 标题 -->
+      <header class="game-header">
+        <h1 class="game-title">私生模拟器</h1>
+        <p class="game-subtitle">SAASENG SIMULATOR</p>
+      </header>
+      
+      <!-- 偶像信息 -->
+      <div class="celebrity-card">
+        <div class="celebrity-info">
+          <span class="celebrity-name" id="celebrityName">加载中...</span>
+          <span class="celebrity-type" id="celebrityType"></span>
+        </div>
+        <span class="difficulty-badge" id="difficultyBadge">难度</span>
+      </div>
+      
+      <!-- 属性面板 -->
+      <div class="attributes-panel">
+        <div class="attribute-card stamina">
+          <div class="attribute-label">体力</div>
+          <div class="attribute-value" id="staminaValue">100</div>
+          <div class="attribute-bar">
+            <div class="attribute-bar-fill" id="staminaBar" style="width: 100%"></div>
+          </div>
+        </div>
+        
+        <div class="attribute-card money">
+          <div class="attribute-label">资金</div>
+          <div class="attribute-value" id="moneyValue">¥5000</div>
+          <div class="attribute-bar">
+            <div class="attribute-bar-fill" id="moneyBar" style="width: 100%"></div>
+          </div>
+        </div>
+        
+        <div class="attribute-card stealth">
+          <div class="attribute-label">隐蔽度</div>
+          <div class="attribute-value" id="stealthValue">100</div>
+          <div class="attribute-bar">
+            <div class="attribute-bar-fill" id="stealthBar" style="width: 100%"></div>
+          </div>
+        </div>
+        
+        <div class="attribute-card sanity">
+          <div class="attribute-label">理智</div>
+          <div class="attribute-value" id="sanityValue">100</div>
+          <div class="attribute-bar">
+            <div class="attribute-bar-fill" id="sanityBar" style="width: 100%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 进度面板 -->
+      <div class="progress-panel">
+        <div class="progress-header">
+          <span class="progress-label">追踪进度</span>
+          <span class="progress-value" id="progressValue">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar-fill" id="progressBar" style="width: 0%"></div>
+        </div>
+        <div class="progress-stage" id="progressStage">萌芽期 - 一切才刚刚开始</div>
+      </div>
+      
+      <!-- 变化提示 -->
+      <div class="changes-panel" id="changesPanel"></div>
+      
+      <!-- 叙事区域 -->
+      <div class="narrative-panel" id="narrativePanel">
+        <span class="event-name" id="eventName"></span>
+        <p class="narrative-text" id="narrativeText">加载中...</p>
+        <div class="mood-tags" id="moodTags"></div>
+      </div>
+      
+      <!-- 选项区域 -->
+      <div class="options-panel" id="optionsPanel">
+        <button class="option-btn" onclick="selectOption('continue')">
+          <span class="option-text">继续</span>
+          <span class="option-risk risk-low">继续</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- 游戏结束界面 -->
+    <div id="gameOverPanel" class="game-over-panel" style="display: none;">
+      <h2 class="game-over-title" id="gameOverTitle">游戏结束</h2>
+      <p class="game-over-narrative" id="gameOverNarrative"></p>
+      <button class="restart-btn" onclick="restartGame()">重新开始</button>
+    </div>
+    
+    <!-- 状态栏 -->
+    <div class="status-bar" id="statusBar" style="display: none;">
+      <span id="statusDays">追踪天数: 0</span>
+      <span id="statusMode"></span>
+    </div>
+  </div>
+
+  <script>
+    // =============================================
+    // 全局状态
+    // =============================================
+    
+    let currentState = null;
+    let isProcessing = false;
+    
+    // =============================================
+    // UI 更新函数
+    // =============================================
+    
+    function updateUI(state) {
+      currentState = state;
+      
+      // 更新属性
+      const attrs = state.attributes;
+      
+      updateAttribute('stamina', attrs.stamina, 100);
+      updateAttribute('stealth', attrs.stealth, 100);
+      updateAttribute('sanity', attrs.sanity, 100);
+      
+      // 资金特殊处理
+      const moneyEl = document.getElementById('moneyValue');
+      const moneyBar = document.getElementById('moneyBar');
+      moneyEl.textContent = `¥${attrs.money}`;
+      const moneyPercent = Math.min(100, (attrs.money / 5000) * 100);
+      moneyBar.style.width = `${moneyPercent}%`;
+      updateValueClass(moneyEl, attrs.money, 1000, 2000, 5000);
+      
+      // 更新进度
+      document.getElementById('progressValue').textContent = `${state.progress}%`;
+      document.getElementById('progressBar').style.width = `${state.progress}%`;
+      
+      // 更新进度阶段
+      const stage = getProgressStage(state.progress);
+      document.getElementById('progressStage').textContent = stage;
+      
+      // 更新天数
+      document.getElementById('statusDays').textContent = `追踪天数: ${state.daysElapsed}`;
+      
+      // 深渊模式特效
+      if (state.godViewMode) {
+        document.getElementById('gameContainer').classList.add('god-view-mode');
+        document.getElementById('statusMode').textContent = '【深渊模式】';
+      }
+    }
+    
+    function updateAttribute(name, value, max) {
+      const valueEl = document.getElementById(`${name}Value`);
+      const barEl = document.getElementById(`${name}Bar`);
+      
+      valueEl.textContent = value;
+      barEl.style.width = `${(value / max) * 100}%`;
+      
+      updateValueClass(valueEl, value, max * 0.3, max * 0.5, max);
+    }
+    
+    function updateValueClass(el, value, low, medium, high) {
+      el.classList.remove('low', 'medium', 'high');
+      if (value <= low) el.classList.add('low');
+      else if (value <= medium) el.classList.add('medium');
+      else el.classList.add('high');
+    }
+    
+    function getProgressStage(progress) {
+      if (progress < 30) return '萌芽期 - 一切才刚刚开始';
+      if (progress < 60) return '沉没期 - 已经无法回头';
+      if (progress < 90) return '深渊期 - 离终点越来越近';
+      return '终局 - 做出你的选择';
+    }
+    
+    function showChanges(changes) {
+      const panel = document.getElementById('changesPanel');
+      if (!changes || Object.keys(changes).length === 0) {
+        panel.classList.remove('show');
+        return;
+      }
+      
+      let html = '';
+      for (const [key, value] of Object.entries(changes)) {
+        if (value === 0) continue;
+        const cls = value > 0 ? 'change-positive' : 'change-negative';
+        const sign = value > 0 ? '+' : '';
+        const labels = { stamina: '体力', money: '资金', stealth: '隐蔽', sanity: '理智', progress: '进度' };
+        html += `<span class="change-item ${cls}">${labels[key] || key}: ${sign}${value}</span>`;
+      }
+      
+      panel.innerHTML = html;
+      panel.classList.add('show');
+      
+      setTimeout(() => panel.classList.remove('show'), 3000);
+    }
+    
+    // =============================================
+    // 游戏流程控制
+    // =============================================
+    
+    function startGame() {
+      // 加载事件库
+      if (!window.EVENT_LIBRARY) {
+        loadEventsData();
+      }
+      
+      // 初始化游戏
+      const initResult = window.SasaengSimulator.init();
+      
+      // 更新 UI
+      document.getElementById('startPanel').style.display = 'none';
+      document.getElementById('gamePanel').style.display = 'block';
+      document.getElementById('gameOverPanel').style.display = 'none';
+      document.getElementById('statusBar').style.display = 'flex';
+      
+      // 设置偶像信息
+      document.getElementById('celebrityName').textContent = `${initResult.celebrity.name}「${initResult.celebrity.alias}」`;
+      document.getElementById('celebrityType').textContent = initResult.celebrity.type;
+      
+      const badge = document.getElementById('difficultyBadge');
+      badge.textContent = { extreme: '炼狱', hard: '困难', medium: '普通', easy: '简单' }[initResult.celebrity.difficulty] || '普通';
+      badge.className = `difficulty-badge difficulty-${initResult.celebrity.difficulty}`;
+      
+      // 显示第一个事件
+      showEvent(initResult.event);
+      
+      // 更新状态
+      updateUI(window.SasaengSimulator.getState());
+    }
+    
+    function showEvent(event) {
+      document.getElementById('eventName').textContent = event?.eventName || '';
+      document.getElementById('narrativeText').textContent = event?.description || '...';
+      document.getElementById('moodTags').innerHTML = '';
+      
+      // 渲染选项
+      const optionsPanel = document.getElementById('optionsPanel');
+      if (event?.options && event.options.length > 0) {
+        optionsPanel.innerHTML = event.options.map(opt => `
+          <button class="option-btn" onclick="selectOption('${opt.id}')" ${isProcessing ? 'disabled' : ''}>
+            <span class="option-text">${opt.text}</span>
+            <span class="option-risk risk-${opt.risk || 'medium'}">${opt.risk || 'medium'}</span>
+          </button>
+        `).join('');
+      }
+    }
+    
+    async function selectOption(optionId) {
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      // 显示加载状态
+      document.getElementById('narrativeText').innerHTML = '<span class="loading">处理中</span>';
+      document.getElementById('optionsPanel').innerHTML = '';
+      
+      try {
+        // 调用 API 或本地引擎
+        const result = await window.GameAPI.processAction(optionId);
+        
+        if (result) {
+          // 显示变化
+          showChanges(result.changes);
+          
+          // 更新状态
+          const state = window.SasaengSimulator.getState();
+          updateUI(state);
+          
+          // 检查游戏结束
+          if (result.isGameOver) {
+            showGameOver(result);
+            return;
+          }
+          
+          // 检查终局
+          if (result.isFinal) {
+            showFinalChoice(result);
+            return;
+          }
+          
+          // 显示新事件
+          if (result.narrative) {
+            document.getElementById('narrativeText').textContent = result.narrative;
+          }
+          
+          // 渲染新选项
+          if (result.options && result.options.length > 0) {
+            document.getElementById('optionsPanel').innerHTML = result.options.map(opt => `
+              <button class="option-btn" onclick="selectOption('${opt.id}')">
+                <span class="option-text">${opt.text}</span>
+                <span class="option-risk risk-${opt.risk || 'medium'}">${opt.risk || 'medium'}</span>
+              </button>
+            `).join('');
+          } else {
+            document.getElementById('optionsPanel').innerHTML = `
+              <button class="option-btn" onclick="selectOption('continue')">
+                <span class="option-text">继续</span>
+                <span class="option-risk risk-low">继续</span>
+              </button>
+            `;
+          }
+        }
+      } catch (error) {
+        console.error('游戏处理失败:', error);
+        document.getElementById('narrativeText').textContent = '游戏出错，请重试。';
+      } finally {
+        isProcessing = false;
+      }
+    }
+    
+    function showFinalChoice(result) {
+      document.getElementById('narrativeText').textContent = result.narrative;
+      document.getElementById('eventName').textContent = '【终局抉择】';
+      
+      document.getElementById('optionsPanel').innerHTML = result.options.map(opt => `
+        <button class="option-btn" onclick="selectFinalOption('${opt.id}')">
+          <span class="option-text">${opt.text}</span>
+          <span class="option-risk risk-extreme">终局</span>
+        </button>
+      `).join('');
+    }
+    
+    async function selectFinalOption(optionId) {
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      try {
+        const result = window.SasaengSimulator.executeFinalChoice(optionId);
+        showGameOver(result);
+      } catch (error) {
+        console.error('终局处理失败:', error);
+      } finally {
+        isProcessing = false;
+      }
+    }
+    
+    function showGameOver(result) {
+      document.getElementById('gamePanel').style.display = 'none';
+      document.getElementById('gameOverPanel').style.display = 'block';
+      
+      const titleEl = document.getElementById('gameOverTitle');
+      const narrativeEl = document.getElementById('gameOverNarrative');
+      
+      // 尝试提取标题
+      const titleMatch = result.narrative.match(/【(.+?)】/);
+      if (titleMatch) {
+        titleEl.textContent = titleMatch[1];
+      } else {
+        titleEl.textContent = '游戏结束';
+      }
+      
+      narrativeEl.textContent = result.narrative;
+    }
+    
+    function restartGame() {
+      window.GameAPI.resetConversation();
+      document.getElementById('gameContainer').classList.remove('god-view-mode');
+      startGame();
+    }
+    
+    // =============================================
+    // 数据加载
+    // =============================================
+    
+    function loadEventsData() {
+      // events.js 已经在 data/events.json 中定义
+      // 这里确保它被加载
+      fetch('data/events.json')
+        .then(r => r.json())
+        .then(data => {
+          window.EVENT_LIBRARY = data;
+        })
+        .catch(e => {
+          console.warn('事件数据加载失败:', e);
+        });
+    }
+    
+    // 页面加载完成后检查数据
+    document.addEventListener('DOMContentLoaded', () => {
+      // 延迟加载事件数据
+      if (!window.EVENT_LIBRARY) {
+        fetch('data/events.json')
+          .then(r => r.json())
+          .then(data => {
+            window.EVENT_LIBRARY = data;
+          });
+      }
+    });
+  </script>
+</body>
+</html>

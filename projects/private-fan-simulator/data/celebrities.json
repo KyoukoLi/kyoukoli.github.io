@@ -1,0 +1,145 @@
+/**
+ * 私生模拟器 - 偶像池
+ * 不同偶像有不同难度和特殊事件
+ */
+
+window.CELEBRITY_POOL = [
+  {
+    id: 'xiaoyuan',
+    name: '苏晓媛',
+    alias: '苏苏',
+    gender: 'female',
+    type: '顶流女歌手',
+    difficulty: 'extreme',
+    riskProfile: {
+      security_level: '极高',
+      privacy_level: '极强',
+      staff_vigilance: '非常警觉',
+      media_exposure: '极高'
+    },
+    profile: {
+      age: 26,
+      height: '168cm',
+      base: '北京',
+      schedule: '频繁全国巡演 + 综艺节目录制',
+      personality: '表面甜美，实则对私生饭极度反感，曾公开在直播中点名批评跟踪行为'
+    },
+    events: [
+      'xiao_yuan_concert',
+      'xiao_yuan_hotel',
+      'xiao_yuan_restaurant'
+    ],
+    specialTrait: '她会主动记住私生饭的脸并在社交媒体上点名',
+    maxProgress: 100
+  },
+  {
+    id: 'xiaoguo',
+    name: '林小果',
+    alias: '果果',
+    gender: 'male',
+    type: '当红男演员',
+    difficulty: 'hard',
+    riskProfile: {
+      security_level: '高',
+      privacy_level: '高',
+      staff_vigilance: '警觉',
+      media_exposure: '高'
+    },
+    profile: {
+      age: 24,
+      height: '185cm',
+      base: '横店 / 北京',
+      schedule: '剧组拍戏 + 代言活动 + 粉丝见面会',
+      personality: '对粉丝态度温和，但团队对私生饭零容忍'
+    },
+    events: [
+      'xiao_guo_studio',
+      'xiao_guo_airport',
+      'xiao_guo_car'
+    ],
+    specialTrait: '粉丝应援组织庞大，容易被其他粉丝举报',
+    maxProgress: 100
+  },
+  {
+    id: 'qianqian',
+    name: '沈芊',
+    alias: '千千',
+    gender: 'female',
+    type: '新晋偶像',
+    difficulty: 'medium',
+    riskProfile: {
+      security_level: '中',
+      privacy_level: '中',
+      staff_vigilance: '一般',
+      media_exposure: '中'
+    },
+    profile: {
+      age: 20,
+      height: '162cm',
+      base: '上海',
+      schedule: '选秀出道后人气飙升，通告越来越多',
+      personality: '对粉丝态度亲切，不太懂如何拒绝',
+      note: '作为新人，行程管理尚不完善，漏洞较多'
+    },
+    events: [
+      'qianqian_school',
+      'qianqian_dorm',
+      'qianqian_company'
+    ],
+    specialTrait: '行程安保存在漏洞，但成长速度快，安保会逐渐加强',
+    maxProgress: 100
+  },
+  {
+    id: 'dage',
+    name: '陈大个',
+    alias: '大个',
+    gender: 'male',
+    type: '脱口秀演员',
+    difficulty: 'easy',
+    riskProfile: {
+      security_level: '低',
+      privacy_level: '低',
+      staff_vigilance: '不在意',
+      media_exposure: '中'
+    },
+    profile: {
+      age: 32,
+      height: '190cm',
+      base: '上海',
+      schedule: '开放麦 + 节目录制 + 直播带货',
+      personality: '性格随和，甚至会在机场和粉丝聊天合影'
+    },
+    events: [
+      'dage_comedy_club',
+      'dage_live_stream',
+      'dage_street'
+    ],
+    specialTrait: '本人不介意，但可能被团队或路人提醒。风险更多来自"太容易接触"导致的成瘾性',
+    maxProgress: 100
+  }
+];
+
+// 游戏开始时的随机选择
+window.getRandomCelebrity = function() {
+  const pool = window.CELEBRITY_POOL;
+  // 不同难度加权
+  const weights = pool.map(c => {
+    switch (c.difficulty) {
+      case 'extreme': return 1;
+      case 'hard': return 2;
+      case 'medium': return 3;
+      case 'easy': return 2;
+      default: return 1;
+    }
+  });
+  
+  const totalWeight = weights.reduce((a, b) => a + b, 0);
+  let random = Math.random() * totalWeight;
+  
+  for (let i = 0; i < pool.length; i++) {
+    random -= weights[i];
+    if (random <= 0) return pool[i];
+  }
+  
+  return pool[0];
+};
